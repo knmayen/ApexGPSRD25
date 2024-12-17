@@ -1,0 +1,55 @@
+Plan: 
+Use phones connected to strava to track each roll for each driver
+have push captains take pusher data and send to me 
+after rolls, upload the strava and pusher data to the interface
+get the splits for each pusher
+somehow create a library for the push capitans to look at where they can sort by pusher division/hill times
+
+UI needs:
+probably a pusher library
+
+what i need to research:
+- DATA STRUCTURES
+    - each pusher is a dictionary with the keys as hills, and a list of sets with date and time? 
+    - can dictionaries have properties? this could be 
+    - pusher <- object
+    - division <- property
+    - hill times <- each hill is its own property, and they are a set of sets of {time, date, roll #}
+        - can I do this? I should know that <- i think i can as long as i dont try to mutate them
+- I can just use that site for gpx -> txt, but it might be fun to figure out how to read it myself
+- also how do I get data to save
+- github?
+    -if i do this in github, can all of the data be saved in a txt file for the classes?
+- other python graphics packages
+- how to actually get pip working
+
+current plan:
+- use the site for gpx -> txt
+- figure out how to read the txt file
+- drawing lines for gps
+- I want to use a graphics package that is not cmu_graphics
+
+
+backend: upload txt file -> assign it to the driver, pushers, day -> code reads it, finds the splits -> code saves pusher splits and data
+frontend: driver mode -> get all lines on a map, be able to see speed for each line (this will be second)
+        push captain mode -> be able to look for hill times, freeroll times, sort hill times by division,
+            - there will need to be pusher profiles (name, division), can this be done in an excel sheet? it might be easier
+
+possible issues:
+- this runs on our cellphones, so maybe we get the drivers to have thier own strava on thier phones that I can connect to mine?
+    - katrina without zello all rolls is unideal
+
+- can strava take multiple sessions at the same time? 
+    - maybe then each driver has an account that is on their phone and my computer <- ith this is the solution
+
+- where are the drivers going to put the phones?
+    - brooklyn had it in her sleeve, i'm not sure that was comfortable
+    - gaff tape in the nose?
+    - taping them to the backs of the harnesses?
+    - this might just be a personal preference
+
+- how is the pusher data input going to look? 
+    - initially an excel file with name and division
+    - could edit the txt files to include the pusher names at the top <- this might be the most coherernt
+
+- also I should get new mechs involved
