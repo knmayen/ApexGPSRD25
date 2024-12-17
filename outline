@@ -12,14 +12,17 @@ what i need to research:
 - DATA STRUCTURES
     - each pusher is a dictionary with the keys as hills, and a list of sets with date and time? 
     - can dictionaries have properties? this could be 
-    - pusher <- object
+    - pusher class
+    - name <- object
     - division <- property
     - hill times <- each hill is its own property, and they are a set of sets of {time, date, roll #}
         - can I do this? I should know that <- i think i can as long as i dont try to mutate them
 - I can just use that site for gpx -> txt, but it might be fun to figure out how to read it myself
 - also how do I get data to save
+    - pickling im pretty sure, but where does the data actually save?
 - github?
-    -if i do this in github, can all of the data be saved in a txt file for the classes?
+    - if i do this in github, can all of the data be saved in a txt file for the classes?
+    - wait i figured out the inital part of github lets goooooooo
 - other python graphics packages
 - how to actually get pip working
 
