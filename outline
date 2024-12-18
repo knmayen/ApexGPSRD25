@@ -27,7 +27,8 @@ what i need to research:
 - how to actually get pip working
 
 current plan:
-- use the site for gpx -> txt
+- use the site for gpx -> txt 
+    - https://www.gpsvisualizer.com/convert_input
 - figure out how to read the txt file
 - drawing lines for gps
 - I want to use a graphics package that is not cmu_graphics
