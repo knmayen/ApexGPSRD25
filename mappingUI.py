@@ -5,6 +5,7 @@ import PIL
 from PIL import Image, ImageTk
 from rollClass import *
 import os
+from CoordinateData import *
 
 file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv")
 
@@ -23,20 +24,22 @@ roll1 = Roll(file, infoDict)
 ################################### SCREEN STUFF #######################################
 
 def drawPoints(self):
-
-    # current_path = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-    # dotIcon = ImageTk.PhotoImage(Image.open(os.path.join(current_path, r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\redDot.png")).resize((5, 5)))
     L = []
     for row in self.gpx.itertuples():
         lat = row[3]
         lon = row[4]
-        # marker = mapWidget.set_marker(lat, lon, text = '', icon = dotIcon)
         L.append((lat, lon))
     rev = L[::-1]
     L.extend(rev)
-    # print(L)
+    print('roll', L)
     polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = 'red', border_width = 1)
 
+def drawTransitions(self):
+    for key in self.coorsDict:
+        point1 = self.coorsDict[key][0]
+        point2 = self.coorsDict[key][1]
+        L = [point1, point2, point1]
+        polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = 'blue', border_width = 2)
 
 screen = tkinter.Tk()
 screen.geometry(f"{800}x{600}")
@@ -52,6 +55,7 @@ mapWidget.set_zoom(18)
 
 
 drawPoints(roll1)
+drawTransitions(mashpeeCoords)
 
 
 screen.mainloop()

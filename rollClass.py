@@ -1,4 +1,6 @@
 import pandas
+import copy
+from CoordinateData import *
 
 class Roll:
     def __init__(self, rawGPX, infoDict):
@@ -15,6 +17,11 @@ class Roll:
     def __repr__(self):
         return f'Roll Number {self.rollNum} for {self.driver} in {self.buggy} on {self.date}'
     
+    def __eq__(self, other):
+        if (self.date == other.date) and (self.rollNum == other.rollNum) and (self.driver == other.driver):
+            return True
+        return False
+    
     def getDateAndResetTimes(self, rawGPX):
         # get the initial date from the timing data
         self.date = rawGPX.at[1, 'time']
@@ -29,11 +36,25 @@ class Roll:
             i += 1
         self.gpx = rawGPX
 
+    def getSplits(self, coords):
+        # start looping through the gps pings
+
+       for row in self.gpx.itertuples():
+        lat = row[3]
+        lon = row[4]
+
+        
+
+
+
 
 
 ########################################### TESTING DATA AND CALLS ##########################################################
 
-file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv")
+def dateparse (timestamp):
+    return pandas.to_datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+
+file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv", parse_dates=['time'], date_parser=dateparse)
 
 infoDict = {'rollNum' : 1, 
             'driver' : 'Maggie', 
@@ -43,7 +64,10 @@ infoDict = {'rollNum' : 1,
             'hill3' : 'Michelle',
             'hill4' : 'Sam G', 
             'hill5' : 'Sam L'}
-roll1 = Roll(file, infoDict)
-print(roll1)
-# print(roll1.gpx)
+roll1 = Roll(copy.deepcopy(file), infoDict)
+
+# print(roll1)
+# print(roll1 == roll2)
+
+print(roll1.gpx)
 # print(roll1.hill5)
