@@ -13,20 +13,42 @@ class Coords:
 
     def __init__(self, dict):
         self.coorsDict = dict
-
+        self.orderedList = [key for key in self.coorsDict]
+        self.getBounds()
         # create the lines
         # for key in dict:
         #     getLine(dict[key])
 
-    @staticmethod
-    def getVal(value, x):
-        x0 = value[0][0]
-        y0 = value[0][1]
-        x1 = value[1][0]
-        y1 = value[1][1]
+    def getVal(self, split, x):
+        x0 = self.coorsDict[split][0][0]
+        y0 = self.coorsDict[split][0][1]
+        x1 = self.coorsDict[split][1][0]
+        y1 = self.coorsDict[split][1][1]
 
         return (y1 - y0) / (x1 - x0) * (x - x0)
+    
+    def getBounds(self):
+        # .000001 deg latitude = 1 ft
+        # .000001 deg longitude = .8 ft
+        # bounding box is 3ft on the extension of each line
+        self.bounds = dict()
+        for key in self.coorsDict:
+            boxPoints = []
+            dirs = [((-1, 1), (1, 1)), ((1, -1), (-1, -1))]
+            deltaLat = .000003
+            deltaLon = .0000038
+            for i in range(len(dirs)):
+                lat = self.coorsDict[key][i][0]
+                lon = self.coorsDict[key][i][1]
+                newLat1 = lat + deltaLat * dirs[i][0][0]
+                newLon1 = lon + deltaLon * dirs[i][0][1]
+                newLat2 = lat + deltaLat * dirs[i][1][0]
+                newLon2 = lon + deltaLon * dirs[i][1][1]
+                boxPoints.extend([(newLat1, newLon1), (newLat2, newLon2)])
+            self.bounds[key] = boxPoints
+        print(self.bounds)
+
 
 mashpeeCoords = Coords(mashpeeCoords)
-print(mashpeeCoords)
+# print(mashpeeCoords)
 

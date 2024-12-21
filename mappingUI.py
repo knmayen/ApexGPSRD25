@@ -41,6 +41,13 @@ def drawTransitions(self):
         L = [point1, point2, point1]
         polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = 'blue', border_width = 2)
 
+def drawBoundingBoxes(self):
+    for key in self.bounds:
+        # add first point back in
+        l = self.bounds[key]
+        self.bounds[key] = self.bounds[key] + [self.bounds[key][0]]
+        polygon = mapWidget.set_polygon(self.bounds[key], fill_color = None, outline_color = 'purple', border_width = 1)
+
 screen = tkinter.Tk()
 screen.geometry(f"{800}x{600}")
 screen.title('map')
@@ -56,6 +63,7 @@ mapWidget.set_zoom(18)
 
 drawPoints(roll1)
 drawTransitions(mashpeeCoords)
+drawBoundingBoxes(mashpeeCoords)
 
 
 screen.mainloop()

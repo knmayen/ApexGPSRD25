@@ -39,22 +39,24 @@ class Roll:
     def getSplits(self, coords):
         # start looping through the gps pings
 
-       for row in self.gpx.itertuples():
-        lat = row[3]
-        lon = row[4]
-
-        
-
-
-
+        currentSplitChecking = 0 # maps to the index of the split list that is being checked
+        for row in self.gpx.itertuples():
+            lat = row[3]
+            lon = row[4]
+            # check if coor is in bonding box
+                # if so, store time and move on to next split
+                # if at last split, exit
+            # if not, continue
 
 
 ########################################### TESTING DATA AND CALLS ##########################################################
 
-def dateparse (timestamp):
-    return pandas.to_datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+# def dateparse (timestamp):
+#     return pandas.to_datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
 
-file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv", parse_dates=['time'], date_parser=dateparse)
+# file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv", parse_dates=['time'], date_parser=dateparse)
+
+file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv")
 
 infoDict = {'rollNum' : 1, 
             'driver' : 'Maggie', 
