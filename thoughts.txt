@@ -87,6 +87,11 @@ possible issues:
             - orignially ran by taking the latitude and checking the line created by the next transition zone at that latitude, and
                 determining if that was under threshold as delta to the actual value
             - this did not work
-            - distance from line might be a better option  
+            - distance from line might be a better option 
+                - this would be hard to implement and probaby throw transitions early
+            - instead check the distace from the gps point to each of the transition zone points, and find when both are within 
+                the threshold
+                - I then tried this, and it ended up if either point is within threshold, the point and distances get added to a "close
+                    points" dictionary. Then I find the best point out of the close points and use that
         - then store time and move on to next transition zone line
         - then take the base time and calculate splits based on it

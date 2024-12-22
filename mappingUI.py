@@ -10,7 +10,6 @@ from CoordinateData import *
 roll1 = Roll(file, infoDict)
 
 
-
 ################################### SCREEN STUFF #######################################
 
 # path by individual dots
@@ -35,9 +34,9 @@ def drawPoints(self):
 
 # transition zone lines
 def drawTransitions(self):
-    for key in self.coorsDict:
-        point1 = self.coorsDict[key][0]
-        point2 = self.coorsDict[key][1]
+    for key in self.coordsDict:
+        point1 = self.coordsDict[key][0]
+        point2 = self.coordsDict[key][1]
         L = [point1, point2, point1]
         polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = 'blue', border_width = 2)
 
@@ -52,20 +51,19 @@ def drawBoundingBoxes(self):
 # for debugging, points in which the timing changes over
 def drawHandoffs(self):
     for key in self.splitsDict:
-
         lat = self.splitsDict[key][1]
         lon = self.splitsDict[key][2]
-        num = self.splitsDict[key][3]
+        # num = self.splitsDict[key][3]
         print(lat, lon)
-        marker = mapWidget.set_marker(lat, lon, text = num)
+        marker = mapWidget.set_marker(lat, lon)
 
 # only for debugging, not needed anymore
 def drawLines(self):
-    for key in self.coorsDict:
-        coorsList = self.coorsDict[key]
-        x0 = coorsList[0][0]
+    for key in self.coordsDict:
+        coordsList = self.coordsDict[key]
+        x0 = coordsList[0][0]
         y0 = self.getVal(key, x0)
-        x1 = coorsList[1][0]
+        x1 = coordsList[1][0]
         y1 = self.getVal(key, x1)
         x5 = abs(x0-x1)/2 + x0
         y5 = self.getVal(key, x5)

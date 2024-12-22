@@ -38,33 +38,75 @@ class Roll:
             i += 1
         self.gpx = rawGPX
 
+    # # gets the timing splits, creates a dictionary of the handoff times
+    # def getSplits(self, coords):
+    #     # start looping through the gps pings
+    #     self.splitsDict = dict()
+    #     currentSplitChecking = 0 # maps to the index of the split list that is being checked
+    #     threshold = .001
+    #     for row in self.gpx.itertuples():
+    #         lat = row[3]
+    #         lon = row[4]
+    #         split = coords.orderedList[currentSplitChecking]
+    #         # get y value of current split and position
+    #         y = coords.getVal(split, lat)
+    #         print(y, lon, abs(y - lon), split)
+    #         x0 = coords.coorsDict[split][0][0]
+
+    #         # check if coor is in bonding box
+    #         if abs(y - lon) < threshold and abs(x0 - lat) < threshold:     # within 10 feet
+    #             # if so, store time and move on to next split
+    #             self.splitsDict[split] = [row[2], lat, lon, currentSplitChecking]
+    #             if currentSplitChecking < len(coords.orderedList) - 1:
+    #                 currentSplitChecking += 1
+    #             # if at last split, exit
+    #         # if not, continue
+    #     print('splitsDict')
+    #     print(self.splitsDict)
+
     # gets the timing splits, creates a dictionary of the handoff times
     def getSplits(self, coords):
-        # start looping through the gps pings
-        self.splitsDict = dict()
+        self.getClosePoints(coords)
+        self.getBestPoints()
+
+    # gets the points close to each split
+    def getClosePoints(self, coords):
+        self.closePoints = dict()
         currentSplitChecking = 0 # maps to the index of the split list that is being checked
-        threshold = .001
+        threshold = .00007
+        # start looping through the gps pings
+        foundOne = False
         for row in self.gpx.itertuples():
             lat = row[3]
             lon = row[4]
             split = coords.orderedList[currentSplitChecking]
-            # get y value of current split and position
-            y = coords.getVal(split, lat)
-            print(y, lon, abs(y - lon), split)
-            x0 = coords.coorsDict[split][0][0]
+            dist1, dist2 = coords.getDoubleDist(lat, lon, split)
+            if dist1 < threshold or dist2 < threshold:
+                self.closePoints[split] = self.closePoints.get(split, []) + [(row[2], lat, lon, dist1 + dist2, currentSplitChecking)]
+                foundOne = True
+            elif foundOne:
+                currentSplitChecking += 1
+                foundOne = False
+                if currentSplitChecking > len(coords.orderedList) - 1:
+                    break
 
-            # check if coor is in bonding box
-            if abs(y - lon) < threshold and abs(x0 - lat) < threshold:     # within 10 feet
-                # if so, store time and move on to next split
-                self.splitsDict[split] = [row[2], lat, lon, currentSplitChecking]
-                if currentSplitChecking < len(coords.orderedList) - 1:
-                    currentSplitChecking += 1
-                # if at last split, exit
-            # if not, continue
-        print('splitsDict')
-        print(self.splitsDict)
+    # finds the closest point to each split from the close points dictionary created
+    def getBestPoints(self):
+        self.splitsDict = dict()
 
+        for key in self.closePoints:
+            points = self.closePoints[key]
+            bestDistance = 10
+            bestPoint = (0,0)
 
+            for time, lat, lon, dist, n in points:
+                if dist < bestDistance:
+                    bestDistance = dist
+                    bestPoint = (time, lat, lon)
+                
+            self.splitsDict[key] = bestPoint
+        
+            
 ########################################### TESTING DATA AND CALLS ##########################################################
 
 # def dateparse (timestamp):
@@ -84,10 +126,10 @@ infoDict = {'rollNum' : 1,
             'hill5' : 'Sam L'}
 roll1 = Roll(copy.deepcopy(file), infoDict)
 
-print(roll1)
+# print(roll1)
 # print(roll1 == roll2)
 
 # print(roll1.gpx)
 # print(roll1.hill5)
-print('DEBUGGING HERE')
-print(mashpeeCoords.getVal('Hill 1/Hill 2', 41.648226))
+# print('DEBUGGING HERE')
+# print(roll1.getSplits(mashpeeCoords))
