@@ -1,6 +1,7 @@
 import pandas
 import copy
 from CoordinateData import *
+from datetime import datetime
 
 class Roll:
     def __init__(self, rawGPX, infoDict):
@@ -33,41 +34,16 @@ class Roll:
         i = 0
         for row in rawGPX.itertuples():
             full = row[2]
-            partial = full[full.find(" ") :]
+            partial = full[full.find(" ")  + 1:]
             rawGPX.at[i, 'time'] = partial
             i += 1
         self.gpx = rawGPX
-
-    # # gets the timing splits, creates a dictionary of the handoff times
-    # def getSplits(self, coords):
-    #     # start looping through the gps pings
-    #     self.splitsDict = dict()
-    #     currentSplitChecking = 0 # maps to the index of the split list that is being checked
-    #     threshold = .001
-    #     for row in self.gpx.itertuples():
-    #         lat = row[3]
-    #         lon = row[4]
-    #         split = coords.orderedList[currentSplitChecking]
-    #         # get y value of current split and position
-    #         y = coords.getVal(split, lat)
-    #         print(y, lon, abs(y - lon), split)
-    #         x0 = coords.coorsDict[split][0][0]
-
-    #         # check if coor is in bonding box
-    #         if abs(y - lon) < threshold and abs(x0 - lat) < threshold:     # within 10 feet
-    #             # if so, store time and move on to next split
-    #             self.splitsDict[split] = [row[2], lat, lon, currentSplitChecking]
-    #             if currentSplitChecking < len(coords.orderedList) - 1:
-    #                 currentSplitChecking += 1
-    #             # if at last split, exit
-    #         # if not, continue
-    #     print('splitsDict')
-    #     print(self.splitsDict)
-
+ 
     # gets the timing splits, creates a dictionary of the handoff times
     def getSplits(self, coords):
         self.getClosePoints(coords)
         self.getBestPoints()
+        self.getHillTimes()
 
     # gets the points close to each split
     def getClosePoints(self, coords):
@@ -76,17 +52,21 @@ class Roll:
         threshold = .00007
         # start looping through the gps pings
         foundOne = False
+
         for row in self.gpx.itertuples():
             lat = row[3]
             lon = row[4]
             split = coords.orderedList[currentSplitChecking]
             dist1, dist2 = coords.getDoubleDist(lat, lon, split)
+
             if dist1 < threshold or dist2 < threshold:
                 self.closePoints[split] = self.closePoints.get(split, []) + [(row[2], lat, lon, dist1 + dist2, currentSplitChecking)]
                 foundOne = True
+
             elif foundOne:
                 currentSplitChecking += 1
                 foundOne = False
+
                 if currentSplitChecking > len(coords.orderedList) - 1:
                     break
 
@@ -105,16 +85,35 @@ class Roll:
                     bestPoint = (time, lat, lon)
                 
             self.splitsDict[key] = bestPoint
+
+    def getHillTimes(self):
+        self.hillTimes = dict()
+
+        for key in self.splitsDict:
+            time = self.splitsDict[key][0]
+            time = datetime.strptime(time, "%H:%M:%S")
+
+            for elem in key.split('/'):
+
+                if elem in self.hillTimes:
+                    print(time, self.hillTimes[elem], self.hillTimes['Start'])
+                    self.hillTimes[elem] = (time - self.hillTimes[elem]).total_seconds()
+ 
+                else:
+                    self.hillTimes[elem] = time
+
+        # get the finish time as the total time
+        self.hillTimes['Finish'] = (self.hillTimes['Finish'] - self.hillTimes['Start']).total_seconds()
+        # get the start time as the starting timestamp
+        self.hillTimes['Start'] = self.hillTimes['Start'].strftime("%H:%M:%S")
+
         
             
 ########################################### TESTING DATA AND CALLS ##########################################################
 
-# def dateparse (timestamp):
-#     return pandas.to_datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
-
 # file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv", parse_dates=['time'], date_parser=dateparse)
 
-file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv")
+file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\NeighborhoodLap2.txt", sep = '\t')
 
 infoDict = {'rollNum' : 1, 
             'driver' : 'Maggie', 
@@ -128,8 +127,10 @@ roll1 = Roll(copy.deepcopy(file), infoDict)
 
 # print(roll1)
 # print(roll1 == roll2)
+print(roll1.date)
+print(roll1.gpx)
 
-# print(roll1.gpx)
+# print(roll1.gpx['time'])
 # print(roll1.hill5)
 # print('DEBUGGING HERE')
-# print(roll1.getSplits(mashpeeCoords))
+# print(roll1.splitsDict)
