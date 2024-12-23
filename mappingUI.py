@@ -7,8 +7,6 @@ from rollClass import *
 import os
 from CoordinateData import *
 
-roll1 = Roll(file, infoDict)
-
 
 ################################### SCREEN STUFF #######################################
 
@@ -72,11 +70,11 @@ def drawLines(self):
 
 
 # actual screen calls
-screen = tkinter.Tk()
-screen.geometry(f"{800}x{600}")
-screen.title('map')
+mapScreen = tkinter.Tk()
+mapScreen.geometry(f"{800}x{600}")
+mapScreen.title('map')
 
-mapWidget = tkintermapview.TkinterMapView(screen, width = 800, height = 600)
+mapWidget = tkintermapview.TkinterMapView(mapScreen, width = 800, height = 600)
 mapWidget.pack(fill = 'both', expand = True)
 
 mapWidget.place(relx = .5, rely = .5, anchor = tkinter.CENTER)
@@ -91,4 +89,4 @@ drawTransitions(mashpeeCoords)
 drawHandoffs(roll1)
 # drawLines(mashpeeCoords)
 
-screen.mainloop()
+mapScreen.mainloop()
