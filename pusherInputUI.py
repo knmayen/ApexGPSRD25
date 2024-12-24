@@ -2,9 +2,15 @@
 import tkinter
 from tkinter import *
 from pusherClass import *
+import pickle
 
-allPushers = dict()
-pusherNames = []
+# allPushers = dict()
+# pusherNames = []
+
+pusherFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle.pickle", 'rb')
+allPushers = pickle.load(pusherFile)
+pusherFile.close()
+print(allPushers)
 
 def addPusher():
     # take inputs and create pusher object
@@ -18,6 +24,7 @@ def addPusher():
         allPushers[name] = Pusher(name, allGender.get(), womens.get(), mens.get())
         clearInputs()
         updateListbox()
+        storeData()
         
     print(allPushers)
 
@@ -33,6 +40,11 @@ def updateListbox():
     nameBox.delete(0, tkinter.END)  # Clear the existing items
     for item in pusherNames:
         nameBox.insert(tkinter.END, item)
+
+def storeData():
+    file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'ab')
+    pickle.dump(allPushers, file)
+    file.close()
 
 x = .25
 
