@@ -4,13 +4,13 @@ from tkinter import *
 from pusherClass import *
 import pickle
 
-# allPushers = dict()
-# pusherNames = []
+allPushers = dict()
+pusherNames = []
 
-pusherFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle.pickle", 'rb')
-allPushers = pickle.load(pusherFile)
-pusherFile.close()
-print(allPushers)
+# pusherFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle.pickle", 'rb')
+# allPushers = pickle.load(pusherFile)
+# pusherFile.close()
+# print(allPushers)
 
 def addPusher():
     # take inputs and create pusher object
@@ -26,7 +26,7 @@ def addPusher():
         updateListbox()
         storeData()
         
-    print(allPushers)
+    # print(allPushers)
 
     # clear all input values
 def clearInputs():
@@ -45,6 +45,45 @@ def storeData():
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'ab')
     pickle.dump(allPushers, file)
     file.close()
+
+def editPusher():
+    print('editing')
+    
+
+
+def pusherInfoDisplay():
+    selectedPusher = nameBox.curselection()
+    # print(selectedPusher)
+    
+    allGenderEditing = IntVar()
+    womensEditing = IntVar()
+    mensEditing = IntVar()
+    agEditButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGenderEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    wEditButton = Checkbutton(pusherInputScreen, text = "Womens", variable = womensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    mEditButton = Checkbutton(pusherInputScreen, text = "Mens", variable = mensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    
+    
+
+    if selectedPusher != ():
+        # print('selected', selectedPusher, pusherNames)
+        name = nameBox.get(selectedPusher[0])
+        print(name)
+        allGenderEditing.set(name.ag)
+        womensEditing.set(name.w)
+        mensEditing.set(name.m)
+
+        editLabel.config(text = f'Edit Pusher: {name}')
+        agEditButton.place(relx= x - .08 + .5, rely = .5, anchor=W)
+        wEditButton.place(relx= x - .08 + .5, rely = .6, anchor=W)
+        mEditButton.place(relx= x - .08 + .5, rely = .7, anchor=W)
+    else:
+        editLabel.config(text = '')
+        agEditButton.place_forget()
+        wEditButton.place_forget()
+        mEditButton.place_forget()
+    
+    pusherInputScreen.after(1000, pusherInfoDisplay)
+
 
 x = .25
 
@@ -84,13 +123,31 @@ lb4.place(relx = x + .3, rely = .2, anchor = CENTER)
 
 
 stringNames = tkinter.StringVar(value = pusherNames)
-nameBox = Listbox(pusherInputScreen, listvariable = stringNames, width = 30, height = 20) 
+nameBox = Listbox(pusherInputScreen, listvariable = stringNames, width = 30, height = 20) #width and height are measured in characters and lines
 nameBox.place(relx = x + .3, rely = .5, anchor = CENTER)
 
 # scroll bars are hard
-# scrollBar = Scrollbar(pusherInputScreen) 
-# scrollBar.place() 
-# scrollBar.config(command = nameBox.yview) 
+scrollBar = Scrollbar(pusherInputScreen) 
+scrollBar.place(relx = x + .4, rely = .233, height = 16 * 20) 
+scrollBar.config(command = nameBox.yview) 
+# nameBox.bind("<<ListboxSelect>>", editPusher())
+
+editLabel = Label(pusherInputScreen, text = '')
+editLabel.place(relx= x + .6, rely = .2, anchor=CENTER)
+
+allGenderEditing = IntVar()
+womensEditing = IntVar()
+mensEditing = IntVar()
+agEditButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGenderEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+wEditButton = Checkbutton(pusherInputScreen, text = "Womens", variable = womensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+mEditButton = Checkbutton(pusherInputScreen, text = "Mens", variable = mensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+agEditButton.place(relx= x - .08 + .5, rely = .5, anchor=W)
+wEditButton.place(relx= x - .08 + .5, rely = .6, anchor=W)
+mEditButton.place(relx= x - .08 + .5, rely = .7, anchor=W)
+
+pusherInfoDisplay()
+
+print(nameBox.curselection)
 
 
 pusherInputScreen.mainloop()
