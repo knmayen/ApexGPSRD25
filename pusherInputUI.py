@@ -38,6 +38,7 @@ def clearInputs():
 
 def updateListbox():
     pusherNames = [str(name) for name in allPushers] # Update your list here
+    pusherNames.sort()
     nameBox.delete(0, tkinter.END)  # Clear the existing items
     for item in pusherNames:
         nameBox.insert(tkinter.END, item)
