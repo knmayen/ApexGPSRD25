@@ -4,7 +4,8 @@ from CoordinateData import *
 from datetime import datetime
 
 class Roll:
-    def __init__(self, rawGPX, infoDict):
+    def __init__(self, rawGPX, infoDict, filename):
+        self.path = filename
         self.rollNum = infoDict['rollNum']
         self.driver = infoDict['driver']
         self.buggy = infoDict['buggy']
@@ -113,22 +114,22 @@ class Roll:
 
 # file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\neighborhoodLap.csv", parse_dates=['time'], date_parser=dateparse)
 
-file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\NeighborhoodLap2.txt", sep = '\t')
+# file = pandas.read_csv(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\NeighborhoodLap2.txt", sep = '\t')
 
-infoDict = {'rollNum' : 1, 
-            'driver' : 'Maggie', 
-            'buggy' : 'Solaris', 
-            'hill1' : 'Wesley',
-            'hill2' : 'Anthony',
-            'hill3' : 'Michelle',
-            'hill4' : 'Sam G', 
-            'hill5' : 'Sam L'}
-roll1 = Roll(copy.deepcopy(file), infoDict)
+# infoDict = {'rollNum' : 1, 
+#             'driver' : 'Maggie', 
+#             'buggy' : 'Solaris', 
+#             'hill1' : 'Wesley',
+#             'hill2' : 'Anthony',
+#             'hill3' : 'Michelle',
+#             'hill4' : 'Sam G', 
+#             'hill5' : 'Sam L'}
+# roll1 = Roll(copy.deepcopy(file), infoDict)
 
-# print(roll1)
-# print(roll1 == roll2)
-print(roll1.date)
-print(roll1.gpx)
+# # print(roll1)
+# # print(roll1 == roll2)
+# print(roll1.date)
+# print(roll1.gpx)
 
 # print(roll1.gpx['time'])
 # print(roll1.hill5)

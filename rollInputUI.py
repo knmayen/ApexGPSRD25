@@ -7,45 +7,41 @@ from rollClass import Roll
 from pusherClass import Pusher
 import pandas
 
-# get all of the pusher names in a sorted list
+# load pusher data, get all of the pusher names in a sorted list
 pusherFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'rb')
 allPushers = pickle.load(pusherFile)
 pusherFile.close()
 
 pusherNames = [key for key in allPushers]
 pusherNames.sort()
-print(pusherNames)
+
+
+# load rolls Data
+rollFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'rb')
+allRolls = pickle.load(rollFile)
+rollFile.close()
 
 # driver and buggy data
 drivers = ['Maggie', 'Bella', 'Sara', 'Lily', 'Emma']
 buggies = ['Solaris', 'Scorch', 'Helios', 'Firefly', 'Molotov']
-allRolls = dict()
 hillBoxes = []
-# filename = ''
+filename = ''
+rollTags = []
 
-
-# rollFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'rb')
-# allRolls = pickle.load(rollFile)
-# rollFile.close()
-
-
-# def storeData():
-#     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
-#     pickle.dump(allRolls, file)
-#     file.close()
-
+for tag in allRolls:
+    rollTags.append(tag)
 
 
 def addRollFile():
     global filename
     filename = fd.askopenfilename()
     print(filename)
-    fileText = Label(rollInputScreen, text = f'{filename}')
-    fileText.pack()
+    fileText.config(text = f'{filename}')
 
-def saveRoll(filename):
-    error = Label(rollInputScreen, text = "Please Check all Inputs", fg = 'red')
-    if checkInputs(filename) == True:
+def saveRoll():
+    global filename
+
+    if checkInputs() == True:
         # get gpx
         gpx = pandas.read_csv(filename, sep = '\t')
 
@@ -63,22 +59,26 @@ def saveRoll(filename):
         # get tag for the dictionary
         driverTag = getDriverTag(infoDict['driver'])
         date = getDate(gpx)
-        tag = date + '-' + driverTag + '-' + infoDict['buggy'][0] + '-' + str(infoDict['rollNum'])
-        print('tag: ', tag)
+        tag = date + '-' + driverTag + '-' + infoDict['buggy'][0:3] + '-' + str(infoDict['rollNum'])
         
         # add to dictionary
-        allRolls[tag] = Roll(gpx, infoDict)
-        print(allRolls)
+        allRolls[tag] = Roll(gpx, infoDict, filename)
+        rollTags.append(tag)
 
         error.pack_forget()
 
         clearInputs()
         assignSplits(tag, infoDict)
-    else:
-        error.pack()
+        storeData()
+        updateListbox()
 
-# there is a bug here with filename AHHHHHHHHHHHH
-def checkInputs(filename):
+    else:
+        if not error.winfo_ismapped():
+            error.pack()
+
+
+def checkInputs():
+    global filename
     boxes = [driverBox, buggyBox, rollNumEntry] + hillBoxes
     for box in boxes:
         if box.get() == '':
@@ -111,25 +111,39 @@ def getDriverTag(driver):
 # deal with filename
 def clearInputs():
     boxes = [driverBox, buggyBox] + hillBoxes
-    print(boxes)
+
     for box in boxes:
         box.set('')
     rollNumEntry.delete(0, tkinter.END)
+    fileText.config(text = '')
 
 def assignSplits(tag, infoDict):
-    print(allRolls[tag].hillTimes)
+
     # reverse dictionary so it is pusher : hill
     revDict = dict()
-    for hill in allRolls[tag].hillTimes:
+    for hill in infoDict:
         if 'hill' in hill:
-            pusher = allRolls[tag].hillTimes[hill]
-            revDict[pusher] = (hill
+            pusher = infoDict[hill]
+            revDict[pusher] = (hill)
+
 
     # loop through reversed dictonary and add times from allrolls[tag].hillTimes to pusher instances
         # pusher hill properties are a dictionary of hills with nested dicts, inseter tag : time
-
+    for pusher in revDict:
+        hill = revDict[pusher]
+        allPushers[str(pusher)].times[hill].update({tag : allRolls[tag].hillTimes[hill]})
+        if hill == 'hill1' or hill == 'hill2':
+             allPushers[str(pusher)].times['Freeroll'].update({tag : allRolls[tag].hillTimes['Freeroll']})
 
     
+def storeData():
+    file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'wb')
+    pickle.dump(allPushers, file)
+    file.close()
+
+    file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
+    pickle.dump(allRolls, file)
+    file.close()
 
 
 def pusherFrame():
@@ -149,7 +163,17 @@ def pusherFrame():
         box['values'] = pusherNames
         box.pack(side=LEFT)
 
-    
+def updateListbox():
+    rollTags = [str(tag) for tag in allRolls] # Update your list here
+    rollListbox.delete(0, tkinter.END)  # Clear the existing items
+    for item in rollTags:
+        rollListbox.insert(tkinter.END, item)
+
+def checkSelection():
+    if rollListbox.curselection() != '':
+        selection = rollListbox.curselection()
+        print(selection)
+    rollInputScreen.after(1000, checkSelection)
 
 # actual screen
 rollInputScreen = tkinter.Tk()
@@ -160,6 +184,8 @@ lb1.pack()
 
 fileSelectButton = Button(rollInputScreen, text = 'Select Roll .txt File', command = addRollFile)
 fileSelectButton.pack()
+fileText = Label(rollInputScreen, text = '')
+fileText.pack()
 
 # Driver Frame 
 lb2 = Label(rollInputScreen, text = 'Driver Input')
@@ -192,7 +218,18 @@ buggyBox.pack(side = LEFT)
 pusherFrame()
 
 # save roll button
-saveRollButton = Button(rollInputScreen, text = 'Save Roll Data', command = lambda : saveRoll(filename))
+saveRollButton = Button(rollInputScreen, text = 'Save Roll Data', command = saveRoll)
 saveRollButton.pack()
+
+error = Label(rollInputScreen, text = "Please Check all Inputs", fg = 'red')
+
+stringRolls = tkinter.StringVar(value = rollTags)
+rollListbox = Listbox(rollInputScreen, listvariable = stringRolls, width = 25, height = 20)
+updateListbox()
+rollListbox.pack()
+
+checkSelection()
+
+
 
 rollInputScreen.mainloop()

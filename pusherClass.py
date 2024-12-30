@@ -17,12 +17,12 @@ class Pusher:
             self.m = False
         
         self.times = {
-            'Hill1' : [],
-            'Hill2' : [],
-            'Freeroll' : [],
-            'Hill3' : [],
-            "Hill4" : [],
-            'Hill5' : [],
+            'hill1' : dict(),
+            'hill2' : dict(),
+            'Freeroll' : dict(),
+            'hill3' : dict(),
+            "hill4" : dict(),
+            'hill5' : dict(),
         }
     
     def __repr__(self):
