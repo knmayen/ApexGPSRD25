@@ -4,6 +4,7 @@ from tkinter import *
 from tkinter import filedialog as fd
 from tkinter import ttk 
 from rollClass import Roll
+from pusherClass import Pusher
 import pandas
 
 # get all of the pusher names in a sorted list
@@ -18,8 +19,10 @@ print(pusherNames)
 # driver and buggy data
 drivers = ['Maggie', 'Bella', 'Sara', 'Lily', 'Emma']
 buggies = ['Solaris', 'Scorch', 'Helios', 'Firefly', 'Molotov']
-allRolls = set()
-filename = ''
+allRolls = dict()
+hillBoxes = []
+# filename = ''
+
 
 # rollFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'rb')
 # allRolls = pickle.load(rollFile)
@@ -34,56 +37,100 @@ filename = ''
 
 
 def addRollFile():
+    global filename
     filename = fd.askopenfilename()
     print(filename)
     fileText = Label(rollInputScreen, text = f'{filename}')
     fileText.pack()
 
-def saveRoll():
-    # get gpx
-    print(filename)
-    gpx = pandas.read_csv(filename, sep = '\t')
+def saveRoll(filename):
+    error = Label(rollInputScreen, text = "Please Check all Inputs", fg = 'red')
+    if checkInputs(filename) == True:
+        # get gpx
+        gpx = pandas.read_csv(filename, sep = '\t')
 
-    infoDict = {}
+        # create the infoDict
+        infoDict = {}
+        infoDict['rollNum'] = int(rollNumEntry.get())
+        infoDict['driver']= driverBox.get()
+        infoDict['buggy'] = buggyBox.get()
 
-    infoDict['rollNum'] = int(rollNumEntry.get())
-    infoDict['driver']= driverBox.get()
-    infoDict['buggy'] = buggyBox.get()
-    pushers = []
-    for box in hillBoxes:
-        pushers.append(box.get())
-    # print(pushers)
-    for i in range(5):
-        infoDict[f'hill{i+1}'] = pushers[i]
-    print(infoDict)
-    allRolls.add(Roll(gpx, infoDict))
+        for i in range(len(hillBoxes)):
+            box = hillBoxes[i]
+            pusher = box.get()
+            infoDict[f'hill{i+1}'] = pusher
+
+        # get tag for the dictionary
+        driverTag = getDriverTag(infoDict['driver'])
+        date = getDate(gpx)
+        tag = date + '-' + driverTag + '-' + infoDict['buggy'][0] + '-' + str(infoDict['rollNum'])
+        print('tag: ', tag)
+        
+        # add to dictionary
+        allRolls[tag] = Roll(gpx, infoDict)
+        print(allRolls)
+
+        error.pack_forget()
+
+        clearInputs()
+        assignSplits(tag, infoDict)
+    else:
+        error.pack()
+
+# there is a bug here with filename AHHHHHHHHHHHH
+def checkInputs(filename):
+    boxes = [driverBox, buggyBox, rollNumEntry] + hillBoxes
+    for box in boxes:
+        if box.get() == '':
+            return False
+        
+    if filename == '':
+        return False
     
-def driverFrame():
-    lb2 = Label(rollInputScreen, text = 'Driver Input')
-    lb2.pack()
+    return True
 
-    driverInfoFrame = Frame(rollInputScreen)
-    driverInfoFrame.pack()
+def getDate(gpx):
+    date = gpx.at[1, 'time']
+    date = date[:date.find(' ')]
+    return date
 
-    lb3 = Label(driverInfoFrame, text = "Roll #: ")
-    lb3.pack(side = LEFT)
-    rollNumEntry = Entry(driverInfoFrame)
-    rollNumEntry.pack(side = LEFT)
+# adds their last intial to the first inital of their name
+def getDriverTag(driver):
+    if driver == 'Maggie':
+        lastInitial = 'B'
+    elif driver == 'Bella':
+        lastInitial = 'C'
+    elif driver == 'Sara':
+        lastInitial = 'O'
+    elif driver == 'Lily':
+        lastInitial = 'Q'
+    elif driver == 'Emma':
+        lastInitial = 'B'
+    return driver[0] + lastInitial
 
-    lb4 = Label(driverInfoFrame, text = "Driver Name: ")
-    lb4.pack(side = LEFT)
+# deal with filename
+def clearInputs():
+    boxes = [driverBox, buggyBox] + hillBoxes
+    print(boxes)
+    for box in boxes:
+        box.set('')
+    rollNumEntry.delete(0, tkinter.END)
 
-    driverVar = StringVar()
-    driverBox = ttk.Combobox(driverInfoFrame, textvariable= driverVar )
-    driverBox['values'] = drivers
-    driverBox.pack(side = LEFT)
+def assignSplits(tag, infoDict):
+    print(allRolls[tag].hillTimes)
+    # reverse dictionary so it is pusher : hill
+    revDict = dict()
+    for hill in allRolls[tag].hillTimes:
+        if 'hill' in hill:
+            pusher = allRolls[tag].hillTimes[hill]
+            revDict[pusher] = (hill
 
-    lb5 = Label(driverInfoFrame, text = "Buggy: ")
-    lb5.pack(side = LEFT)
-    buggyVar = StringVar()
-    buggyBox = ttk.Combobox(driverInfoFrame, textvariable= buggyVar )
-    buggyBox['values'] = buggies
-    buggyBox.pack(side = LEFT)
+    # loop through reversed dictonary and add times from allrolls[tag].hillTimes to pusher instances
+        # pusher hill properties are a dictionary of hills with nested dicts, inseter tag : time
+
+
+    
+
 
 def pusherFrame():
     lb6 = Label(rollInputScreen, text = 'Pusher Input')
@@ -114,13 +161,38 @@ lb1.pack()
 fileSelectButton = Button(rollInputScreen, text = 'Select Roll .txt File', command = addRollFile)
 fileSelectButton.pack()
 
-driverFrame()
+# Driver Frame 
+lb2 = Label(rollInputScreen, text = 'Driver Input')
+lb2.pack()
 
-hillBoxes = []
+driverInfoFrame = Frame(rollInputScreen)
+driverInfoFrame.pack()
+
+lb3 = Label(driverInfoFrame, text = "Roll #: ")
+lb3.pack(side = LEFT)
+rollNumEntry = Entry(driverInfoFrame)
+rollNumEntry.pack(side = LEFT)
+
+lb4 = Label(driverInfoFrame, text = "Driver Name: ")
+lb4.pack(side = LEFT)
+
+driverVar = StringVar()
+driverBox = ttk.Combobox(driverInfoFrame, textvariable= driverVar )
+driverBox['values'] = drivers
+driverBox.pack(side = LEFT)
+
+lb5 = Label(driverInfoFrame, text = "Buggy: ")
+lb5.pack(side = LEFT)
+buggyVar = StringVar()
+buggyBox = ttk.Combobox(driverInfoFrame, textvariable= buggyVar )
+buggyBox['values'] = buggies
+buggyBox.pack(side = LEFT)
+
+
 pusherFrame()
 
 # save roll button
-saveRollButton = Button(rollInputScreen, text = 'Save Roll Data', command = saveRoll)
+saveRollButton = Button(rollInputScreen, text = 'Save Roll Data', command = lambda : saveRoll(filename))
 saveRollButton.pack()
 
 rollInputScreen.mainloop()

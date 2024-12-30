@@ -11,7 +11,7 @@ from CoordinateData import *
 ################################### SCREEN STUFF #######################################
 
 # path by individual dots
-def drawDots(self):
+def drawDots(self, mapWidget):
     current_path = os.path.join(os.path.dirname(os.path.abspath(__file__)))
     dotIcon = ImageTk.PhotoImage(Image.open(os.path.join(current_path, r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\redDot.png")).resize((5, 5)))
     for row in self.gpx.itertuples():
@@ -20,7 +20,7 @@ def drawDots(self):
         marker = mapWidget.set_marker(lat, lon, text = '', icon = dotIcon)
 
 # path by polygon
-def drawPoints(self):
+def drawPoints(self, mapWidget):
     L = []
     for row in self.gpx.itertuples():
         lat = row[3]
@@ -31,7 +31,7 @@ def drawPoints(self):
     polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = 'red', border_width = 1)
 
 # transition zone lines
-def drawTransitions(self):
+def drawTransitions(self, mapWidget):
     for key in self.coordsDict:
         point1 = self.coordsDict[key][0]
         point2 = self.coordsDict[key][1]
@@ -39,7 +39,7 @@ def drawTransitions(self):
         polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = 'blue', border_width = 2)
 
 # not really relevant anymore
-def drawBoundingBoxes(self):
+def drawBoundingBoxes(self, mapWidget):
     for key in self.bounds:
         # add first point back in
         l = self.bounds[key]
@@ -47,7 +47,7 @@ def drawBoundingBoxes(self):
         polygon = mapWidget.set_polygon(self.bounds[key], fill_color = None, outline_color = 'purple', border_width = 1)
 
 # for debugging, points in which the timing changes over
-def drawHandoffs(self):
+def drawHandoffs(self, mapWidget):
     for key in self.splitsDict:
         lat = self.splitsDict[key][1]
         lon = self.splitsDict[key][2]
@@ -56,7 +56,7 @@ def drawHandoffs(self):
         marker = mapWidget.set_marker(lat, lon)
 
 # only for debugging, not needed anymore
-def drawLines(self):
+def drawLines(self, mapWidget):
     for key in self.coordsDict:
         coordsList = self.coordsDict[key]
         x0 = coordsList[0][0]
@@ -68,25 +68,27 @@ def drawLines(self):
         
         polygon = mapWidget.set_polygon([(x0, y0), (x5, y5), (x1, y1), (x0, y0)], fill_color = None, outline_color = "purple")
 
+def mapScreenRun():
+    # actual screen calls
+    mapScreen = tkinter.Tk()
+    mapScreen.geometry(f"{800}x{600}")
+    mapScreen.title('map')
 
-# actual screen calls
-mapScreen = tkinter.Tk()
-mapScreen.geometry(f"{800}x{600}")
-mapScreen.title('map')
+    mapWidget = tkintermapview.TkinterMapView(mapScreen, width = 800, height = 600)
+    mapWidget.pack(fill = 'both', expand = True)
 
-mapWidget = tkintermapview.TkinterMapView(mapScreen, width = 800, height = 600)
-mapWidget.pack(fill = 'both', expand = True)
+    mapWidget.place(relx = .5, rely = .5, anchor = tkinter.CENTER)
 
-mapWidget.place(relx = .5, rely = .5, anchor = tkinter.CENTER)
+    mapWidget.set_position(41.648136, -70.491481)  
+    mapWidget.set_zoom(18)
 
-mapWidget.set_position(41.648136, -70.491481)  
-mapWidget.set_zoom(18)
+    drawDots(roll1, mapWidget)
+    # drawPoints(roll1)
+    drawTransitions(mashpeeCoords, mapWidget)
+    # drawBoundingBoxes(mashpeeCoords)
+    drawHandoffs(roll1, mapWidget)
+    # drawLines(mashpeeCoords)
 
-drawDots(roll1)
-# drawPoints(roll1)
-drawTransitions(mashpeeCoords)
-# drawBoundingBoxes(mashpeeCoords)
-drawHandoffs(roll1)
-# drawLines(mashpeeCoords)
+    mapScreen.mainloop()
 
-mapScreen.mainloop()
+mapScreenRun()
