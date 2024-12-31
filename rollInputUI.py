@@ -26,10 +26,21 @@ drivers = ['Maggie', 'Bella', 'Sara', 'Lily', 'Emma']
 buggies = ['Solaris', 'Scorch', 'Helios', 'Firefly', 'Molotov']
 hillBoxes = []
 filename = ''
-rollTags = []
 
-for tag in allRolls:
-    rollTags.append(tag)
+def getAllTags(dict, tags = []):
+    for key in dict:
+        if type(dict[key]) != type(dict):
+            for tag in dict:
+                tags.append(tag)
+            return tags
+        else:
+            tags =  getAllTags(dict[key], tags)
+    return tags
+
+allTags = getAllTags(allRolls)
+
+# for tag in allRolls:
+#     rollTags.append(tag)
 
 
 def addRollFile():
@@ -57,18 +68,20 @@ def saveRoll():
             infoDict[f'hill{i+1}'] = pusher
 
         # get tag for the dictionary
+        
         driverTag = getDriverTag(infoDict['driver'])
         date = getDate(gpx)
         tag = date + '-' + driverTag + '-' + infoDict['buggy'][0:3] + '-' + str(infoDict['rollNum'])
         
         # add to dictionary
-        allRolls[tag] = Roll(gpx, infoDict, filename)
-        rollTags.append(tag)
-
+        createSubdictionaries(date, infoDict, tag)
+        allRolls[date][infoDict['driver']][tag] = Roll(gpx, infoDict, filename)
+        allTags.append(tag)
+        print(allRolls)
         error.pack_forget()
 
         clearInputs()
-        assignSplits(tag, infoDict)
+        assignSplits(date, tag, infoDict)
         storeData()
         updateListbox()
 
@@ -76,6 +89,11 @@ def saveRoll():
         if not error.winfo_ismapped():
             error.pack()
 
+def createSubdictionaries(date, infoDict, tag):
+    allRolls[date] = allRolls.get(date, dict())
+    driver = infoDict['driver']
+    allRolls[date][driver] = allRolls[date].get(driver, dict())
+    allRolls[date][driver][tag] = allRolls[date][driver].get(tag, dict())
 
 def checkInputs():
     global filename
@@ -108,7 +126,6 @@ def getDriverTag(driver):
         lastInitial = 'B'
     return driver[0] + lastInitial
 
-# deal with filename
 def clearInputs():
     boxes = [driverBox, buggyBox] + hillBoxes
 
@@ -117,7 +134,7 @@ def clearInputs():
     rollNumEntry.delete(0, tkinter.END)
     fileText.config(text = '')
 
-def assignSplits(tag, infoDict):
+def assignSplits(date, tag, infoDict):
 
     # reverse dictionary so it is pusher : hill
     revDict = dict()
@@ -131,11 +148,10 @@ def assignSplits(tag, infoDict):
         # pusher hill properties are a dictionary of hills with nested dicts, inseter tag : time
     for pusher in revDict:
         hill = revDict[pusher]
-        allPushers[str(pusher)].times[hill].update({tag : allRolls[tag].hillTimes[hill]})
+        allPushers[str(pusher)].times[hill].update({tag : allRolls[date][infoDict['driver']][tag].hillTimes[hill]})
         if hill == 'hill1' or hill == 'hill2':
-             allPushers[str(pusher)].times['Freeroll'].update({tag : allRolls[tag].hillTimes['Freeroll']})
+             allPushers[str(pusher)].times['Freeroll'].update({tag : allRolls[date][infoDict['driver']][tag].hillTimes['Freeroll']})
 
-    
 def storeData():
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'wb')
     pickle.dump(allPushers, file)
@@ -144,7 +160,6 @@ def storeData():
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
     pickle.dump(allRolls, file)
     file.close()
-
 
 def pusherFrame():
     lb6 = Label(rollInputScreen, text = 'Pusher Input')
@@ -164,16 +179,41 @@ def pusherFrame():
         box.pack(side=LEFT)
 
 def updateListbox():
-    rollTags = [str(tag) for tag in allRolls] # Update your list here
+    global allTags
     rollListbox.delete(0, tkinter.END)  # Clear the existing items
-    for item in rollTags:
+    print('allTags: ', allTags)
+    for item in allTags:
         rollListbox.insert(tkinter.END, item)
 
 def checkSelection():
-    if rollListbox.curselection() != '':
+    if rollListbox.curselection() != ():
         selection = rollListbox.curselection()
         print(selection)
+        showRollInfo(selection)
     rollInputScreen.after(1000, checkSelection)
+
+def showRollInfo(selection):
+    print(selection)
+    print(allRolls)
+    tag = allTags[selection[0]]
+    roll = findRoll(allRolls, tag)
+    print(roll)
+
+    driverLabel = Label(rollInfoFrame, text = roll['driver'])
+    driverLabel.pack(side = LEFT)
+
+
+def findRoll(dict, tag):
+    for key in dict:
+        if key == tag:
+            return dict[key]
+        elif type(dict[key]) != type(dict):
+            return None
+        else:
+            return findRoll(dict[key], tag)
+    return None
+
+
 
 # actual screen
 rollInputScreen = tkinter.Tk()
@@ -223,10 +263,13 @@ saveRollButton.pack()
 
 error = Label(rollInputScreen, text = "Please Check all Inputs", fg = 'red')
 
-stringRolls = tkinter.StringVar(value = rollTags)
-rollListbox = Listbox(rollInputScreen, listvariable = stringRolls, width = 25, height = 20)
+rollInfoFrame = Frame(rollInputScreen)
+rollInfoFrame.pack()
+
+stringRolls = tkinter.StringVar(value = allTags)
+rollListbox = Listbox(rollInfoFrame, listvariable = stringRolls, width = 25, height = 20)
 updateListbox()
-rollListbox.pack()
+rollListbox.pack(side = LEFT)
 
 checkSelection()
 
