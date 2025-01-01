@@ -50,4 +50,15 @@ def getAllTags(dict, tags = []):
             tags =  getAllTags(dict[key], tags)
     return tags
 
-print(getAllTags(allRolls))
+
+def findRoll(dict, tag):
+    for key in dict:
+        if key == tag:
+            return dict[key]
+        elif type(dict[key]) == type(dict):
+            solution = findRoll(dict[key], tag)
+            if solution != None:
+                return solution
+
+
+print(findRoll(allRolls, '2024-12-17-LQ-Fir-4'))

@@ -39,9 +39,6 @@ def getAllTags(dict, tags = []):
 
 allTags = getAllTags(allRolls)
 
-# for tag in allRolls:
-#     rollTags.append(tag)
-
 
 def addRollFile():
     global filename
@@ -159,6 +156,7 @@ def storeData():
 
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
     pickle.dump(allRolls, file)
+    # pickle.dump(dict(), file)
     file.close()
 
 def pusherFrame():
@@ -198,20 +196,29 @@ def showRollInfo(selection):
     tag = allTags[selection[0]]
     roll = findRoll(allRolls, tag)
     print(roll)
+    print(roll.info)
 
-    driverLabel = Label(rollInfoFrame, text = roll['driver'])
-    driverLabel.pack(side = LEFT)
+    infoString = createInfoString(roll)
+    infoLabel.config(text = infoString)
+    
 
-
+# this dosn't work right now
 def findRoll(dict, tag):
     for key in dict:
         if key == tag:
             return dict[key]
-        elif type(dict[key]) != type(dict):
-            return None
-        else:
-            return findRoll(dict[key], tag)
-    return None
+        elif type(dict[key]) == type(dict):
+            solution = findRoll(dict[key], tag)
+            if solution != None:
+                return solution
+            
+def createInfoString(roll):
+    result = f''
+    for key in roll.info:
+        if key == 'rollNum':
+            continue
+        result = result + f'{str(key)}: {roll.info[str(key)]} \n'
+    return result
 
 
 
@@ -271,6 +278,8 @@ rollListbox = Listbox(rollInfoFrame, listvariable = stringRolls, width = 25, hei
 updateListbox()
 rollListbox.pack(side = LEFT)
 
+infoLabel = Label(rollInfoFrame, text ='')
+infoLabel.pack(side = LEFT)
 checkSelection()
 
 

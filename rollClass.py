@@ -14,6 +14,7 @@ class Roll:
         self.hill3 = infoDict['hill3']
         self.hill4 = infoDict['hill4']
         self.hill5 = infoDict['hill5']
+        self.info = infoDict
         self.getDateAndResetTimes(rawGPX)
         self.getSplits(mashpeeCoords)
 
@@ -21,7 +22,7 @@ class Roll:
         return f'Roll Number {self.rollNum} for {self.driver} in {self.buggy} on {self.date}'
     
     def __eq__(self, other):
-        if (self.date == other.date) and (self.rollNum == other.rollNum) and (self.driver == other.driver):
+        if (type(other) == type(self)) and (self.date == other.date) and (self.rollNum == other.rollNum) and (self.driver == other.driver):
             return True
         return False
     
