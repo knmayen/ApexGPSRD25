@@ -133,6 +133,7 @@ def clearInputs():
     rollNumEntry.delete(0, tkinter.END)
     fileText.config(text = '')
 
+# assigns each pusher the time in thier hill dictionaries with tag:time from the pusher class
 def assignSplits(date, tag, infoDict):
 
     # reverse dictionary so it is pusher : hill
@@ -153,12 +154,13 @@ def assignSplits(date, tag, infoDict):
 
 def storeData():
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'wb')
-    pickle.dump(allPushers, file)
+    # pickle.dump(allPushers, file)
+    pickle.dump(dict(), file)
     file.close()
 
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
-    pickle.dump(allRolls, file)
-    # pickle.dump(dict(), file)
+    # pickle.dump(allRolls, file)
+    pickle.dump(dict(), file)
     file.close()
 
 def pusherFrame():
@@ -199,7 +201,6 @@ def showRollInfo(selection):
     infoLabel.config(text = infoString)
     delButton.pack(side = LEFT)
 
-
 def findRoll(dict, tag):
     for key in dict:
         if key == tag:
@@ -235,7 +236,6 @@ def deleteRoll(dict = allRolls):
                 solution = deleteRoll(dict[key])
                 if solution != None:
                     return solution
-
 
 def deletePusherSplits(selection):
     roll = findRoll(allRolls, selection)
@@ -305,7 +305,6 @@ infoLabel.pack(side = LEFT)
 checkSelection()
 
 delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
-
 
 
 rollInputScreen.mainloop()

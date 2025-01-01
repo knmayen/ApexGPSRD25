@@ -6,7 +6,15 @@ from PIL import Image, ImageTk
 from rollClass import *
 import os
 from CoordinateData import *
+from rollInputUI import allRolls
 
+buggyColors = {
+                'Solaris' : 'blue',
+                'Scorch' : 'black',
+                'Helios' : 'cyan',
+                'Firefly' : 'green',
+                'Molotov' : 'orange'
+}
 
 ################################### SCREEN STUFF #######################################
 
@@ -28,7 +36,8 @@ def drawPoints(self, mapWidget):
         L.append((lat, lon))
     rev = L[::-1]
     L.extend(rev)
-    polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = 'red', border_width = 1)
+    color = buggyColors[self.buggy]
+    polygon = mapWidget.set_polygon(L, fill_color = None, outline_color = color, border_width = 1)
 
 # transition zone lines
 def drawTransitions(self, mapWidget):
@@ -82,11 +91,11 @@ def mapScreenRun():
     mapWidget.set_position(41.648136, -70.491481)  
     mapWidget.set_zoom(18)
 
-    drawDots(roll1, mapWidget)
-    # drawPoints(roll1)
+    # drawDots(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'], mapWidget)
+    drawPoints(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'], mapWidget)
     drawTransitions(mashpeeCoords, mapWidget)
     # drawBoundingBoxes(mashpeeCoords)
-    drawHandoffs(roll1, mapWidget)
+    drawHandoffs(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'], mapWidget)
     # drawLines(mashpeeCoords)
 
     mapScreen.mainloop()
