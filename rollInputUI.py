@@ -86,12 +86,14 @@ def saveRoll():
         if not error.winfo_ismapped():
             error.pack()
 
+# creates the subdictionary branches to insert data into
 def createSubdictionaries(date, infoDict, tag):
     allRolls[date] = allRolls.get(date, dict())
     driver = infoDict['driver']
     allRolls[date][driver] = allRolls[date].get(driver, dict())
     allRolls[date][driver][tag] = allRolls[date][driver].get(tag, dict())
 
+# checks to see if all inputs are made correctly in order to make a roll entry
 def checkInputs():
     global filename
     boxes = [driverBox, buggyBox, rollNumEntry] + hillBoxes
@@ -179,30 +181,25 @@ def pusherFrame():
 def updateListbox():
     global allTags
     rollListbox.delete(0, tkinter.END)  # Clear the existing items
-    print('allTags: ', allTags)
+    allTags.sort()
+    allTags = allTags[::-1] # reverse so that the most recent are at the top
     for item in allTags:
         rollListbox.insert(tkinter.END, item)
 
 def checkSelection():
     if rollListbox.curselection() != ():
         selection = rollListbox.curselection()
-        print(selection)
         showRollInfo(selection)
     rollInputScreen.after(1000, checkSelection)
 
 def showRollInfo(selection):
-    print(selection)
-    print(allRolls)
     tag = allTags[selection[0]]
     roll = findRoll(allRolls, tag)
-    print(roll)
-    print(roll.info)
-
     infoString = createInfoString(roll)
     infoLabel.config(text = infoString)
-    
+    delButton.pack(side = LEFT)
 
-# this dosn't work right now
+
 def findRoll(dict, tag):
     for key in dict:
         if key == tag:
@@ -220,7 +217,32 @@ def createInfoString(roll):
         result = result + f'{str(key)}: {roll.info[str(key)]} \n'
     return result
 
+def deleteRoll(dict = allRolls):
+    if rollListbox.curselection() != ():
+        selection = rollListbox.curselection()
+        selection = allTags[selection[0]]
+        for key in dict:
+            if selection == key:
+                deletePusherSplits(selection)
+                del dict[selection]
+                allTags.remove(selection)
+                storeData()
+                updateListbox()
+                infoLabel.config(text = ' ')
+                delButton.pack_forget()
+                return True
+            elif type(dict[key]) == type(dict):
+                solution = deleteRoll(dict[key])
+                if solution != None:
+                    return solution
 
+
+def deletePusherSplits(selection):
+    roll = findRoll(allRolls, selection)
+    for person in roll.info:
+        if 'hill' in person:
+            pusher = roll.info[person]
+            del allPushers[pusher].times[person][selection]          
 
 # actual screen
 rollInputScreen = tkinter.Tk()
@@ -281,6 +303,8 @@ rollListbox.pack(side = LEFT)
 infoLabel = Label(rollInfoFrame, text ='')
 infoLabel.pack(side = LEFT)
 checkSelection()
+
+delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
 
 
 
