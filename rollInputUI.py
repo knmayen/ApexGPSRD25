@@ -154,13 +154,13 @@ def assignSplits(date, tag, infoDict):
 
 def storeData():
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'wb')
-    # pickle.dump(allPushers, file)
-    pickle.dump(dict(), file)
+    pickle.dump(allPushers, file)
+    # pickle.dump(dict(), file)
     file.close()
 
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
-    # pickle.dump(allRolls, file)
-    pickle.dump(dict(), file)
+    pickle.dump(allRolls, file)
+    # pickle.dump(dict(), file)
     file.close()
 
 def pusherFrame():
@@ -245,66 +245,88 @@ def deletePusherSplits(selection):
             del allPushers[pusher].times[person][selection]          
 
 # actual screen
-rollInputScreen = tkinter.Tk()
-rollInputScreen.geometry(f"{800}x{600}")
+def rollInputScreenRun():
+    global rollInputScreen
+    rollInputScreen = tkinter.Tk()
+    rollInputScreen.geometry(f"{800}x{600}")
+    rollInputScreen.title(text = 'Roll Input Screen')
 
-lb1 = Label(rollInputScreen, text = "Roll Input Path:")
-lb1.pack()
+    global lb1
+    lb1 = Label(rollInputScreen, text = "Roll Input Path:")
+    lb1.pack()
 
-fileSelectButton = Button(rollInputScreen, text = 'Select Roll .txt File', command = addRollFile)
-fileSelectButton.pack()
-fileText = Label(rollInputScreen, text = '')
-fileText.pack()
+    global fileSelectButton
+    fileSelectButton = Button(rollInputScreen, text = 'Select Roll .txt File', command = addRollFile)
+    fileSelectButton.pack()
+    global fileText
+    fileText = Label(rollInputScreen, text = '')
+    fileText.pack()
 
-# Driver Frame 
-lb2 = Label(rollInputScreen, text = 'Driver Input')
-lb2.pack()
+    # Driver Frame 
+    global lb2
+    lb2 = Label(rollInputScreen, text = 'Driver Input')
+    lb2.pack()
 
-driverInfoFrame = Frame(rollInputScreen)
-driverInfoFrame.pack()
+    global driverInfoFrame
+    driverInfoFrame = Frame(rollInputScreen)
+    driverInfoFrame.pack()
 
-lb3 = Label(driverInfoFrame, text = "Roll #: ")
-lb3.pack(side = LEFT)
-rollNumEntry = Entry(driverInfoFrame)
-rollNumEntry.pack(side = LEFT)
+    global lb3
+    lb3 = Label(driverInfoFrame, text = "Roll #: ")
+    lb3.pack(side = LEFT)
+    global rollNumEntry
+    rollNumEntry = Entry(driverInfoFrame)
+    rollNumEntry.pack(side = LEFT)
 
-lb4 = Label(driverInfoFrame, text = "Driver Name: ")
-lb4.pack(side = LEFT)
+    global lb4
+    lb4 = Label(driverInfoFrame, text = "Driver Name: ")
+    lb4.pack(side = LEFT)
 
-driverVar = StringVar()
-driverBox = ttk.Combobox(driverInfoFrame, textvariable= driverVar )
-driverBox['values'] = drivers
-driverBox.pack(side = LEFT)
+    driverVar = StringVar()
+    global driverBox
+    driverBox = ttk.Combobox(driverInfoFrame, textvariable= driverVar )
+    driverBox['values'] = drivers
+    driverBox.pack(side = LEFT)
 
-lb5 = Label(driverInfoFrame, text = "Buggy: ")
-lb5.pack(side = LEFT)
-buggyVar = StringVar()
-buggyBox = ttk.Combobox(driverInfoFrame, textvariable= buggyVar )
-buggyBox['values'] = buggies
-buggyBox.pack(side = LEFT)
-
-
-pusherFrame()
-
-# save roll button
-saveRollButton = Button(rollInputScreen, text = 'Save Roll Data', command = saveRoll)
-saveRollButton.pack()
-
-error = Label(rollInputScreen, text = "Please Check all Inputs", fg = 'red')
-
-rollInfoFrame = Frame(rollInputScreen)
-rollInfoFrame.pack()
-
-stringRolls = tkinter.StringVar(value = allTags)
-rollListbox = Listbox(rollInfoFrame, listvariable = stringRolls, width = 25, height = 20)
-updateListbox()
-rollListbox.pack(side = LEFT)
-
-infoLabel = Label(rollInfoFrame, text ='')
-infoLabel.pack(side = LEFT)
-checkSelection()
-
-delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
+    global lb5
+    lb5 = Label(driverInfoFrame, text = "Buggy: ")
+    lb5.pack(side = LEFT)
+    buggyVar = StringVar()
+    global buggyBox
+    buggyBox = ttk.Combobox(driverInfoFrame, textvariable= buggyVar )
+    buggyBox['values'] = buggies
+    buggyBox.pack(side = LEFT)
 
 
-rollInputScreen.mainloop()
+    pusherFrame()
+
+    # save roll button
+    global saveRollButton
+    saveRollButton = Button(rollInputScreen, text = 'Save Roll Data', command = saveRoll)
+    saveRollButton.pack()
+
+    global error
+    error = Label(rollInputScreen, text = "Please Check all Inputs", fg = 'red')
+
+    global rollInfoFrame
+    rollInfoFrame = Frame(rollInputScreen)
+    rollInfoFrame.pack()
+
+    stringRolls = tkinter.StringVar(value = allTags)
+    global rollListbox
+    rollListbox = Listbox(rollInfoFrame, listvariable = stringRolls, width = 25, height = 20)
+    updateListbox()
+    rollListbox.pack(side = LEFT)
+
+    global infoLabel
+    infoLabel = Label(rollInfoFrame, text ='')
+    infoLabel.pack(side = LEFT)
+    checkSelection()
+
+    global delButton
+    delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
+
+
+    rollInputScreen.mainloop()
+
+# rollInputScreenRun()
