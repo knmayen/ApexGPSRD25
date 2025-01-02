@@ -15,7 +15,6 @@ pusherFile.close()
 pusherNames = [key for key in allPushers]
 pusherNames.sort()
 
-
 # load rolls Data
 rollFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'rb')
 allRolls = pickle.load(rollFile)
@@ -195,11 +194,12 @@ def checkSelection():
     rollInputScreen.after(1000, checkSelection)
 
 def showRollInfo(selection):
+    global pad
     tag = allTags[selection[0]]
     roll = findRoll(allRolls, tag)
     infoString = createInfoString(roll)
     infoLabel.config(text = infoString)
-    delButton.pack(side = LEFT)
+    delButton.pack(padx = pad, pady = pad, side = LEFT)
 
 def findRoll(dict, tag):
     for key in dict:
@@ -246,26 +246,29 @@ def deletePusherSplits(selection):
 
 # actual screen
 def rollInputScreenRun():
+    global pad
+    pad = 2
+
     global rollInputScreen
     rollInputScreen = tkinter.Tk()
     rollInputScreen.geometry(f"{800}x{600}")
-    rollInputScreen.title(text = 'Roll Input Screen')
+    rollInputScreen.title('Roll Input Screen')
 
     global lb1
     lb1 = Label(rollInputScreen, text = "Roll Input Path:")
-    lb1.pack()
+    lb1.pack(pady = pad)
 
     global fileSelectButton
     fileSelectButton = Button(rollInputScreen, text = 'Select Roll .txt File', command = addRollFile)
-    fileSelectButton.pack()
+    fileSelectButton.pack(pady = pad)
     global fileText
     fileText = Label(rollInputScreen, text = '')
-    fileText.pack()
+    fileText.pack(pady = pad)
 
     # Driver Frame 
     global lb2
     lb2 = Label(rollInputScreen, text = 'Driver Input')
-    lb2.pack()
+    lb2.pack(pady = pad)
 
     global driverInfoFrame
     driverInfoFrame = Frame(rollInputScreen)
@@ -273,29 +276,29 @@ def rollInputScreenRun():
 
     global lb3
     lb3 = Label(driverInfoFrame, text = "Roll #: ")
-    lb3.pack(side = LEFT)
+    lb3.pack(padx = pad, pady = pad, side = LEFT)
     global rollNumEntry
     rollNumEntry = Entry(driverInfoFrame)
-    rollNumEntry.pack(side = LEFT)
+    rollNumEntry.pack(padx = pad, pady = pad, side = LEFT)
 
     global lb4
     lb4 = Label(driverInfoFrame, text = "Driver Name: ")
-    lb4.pack(side = LEFT)
+    lb4.pack(padx = pad, pady = pad, side = LEFT)
 
     driverVar = StringVar()
     global driverBox
     driverBox = ttk.Combobox(driverInfoFrame, textvariable= driverVar )
     driverBox['values'] = drivers
-    driverBox.pack(side = LEFT)
+    driverBox.pack(padx = pad, pady = pad, side = LEFT)
 
     global lb5
     lb5 = Label(driverInfoFrame, text = "Buggy: ")
-    lb5.pack(side = LEFT)
+    lb5.pack(padx = pad, pady = pad, side = LEFT)
     buggyVar = StringVar()
     global buggyBox
     buggyBox = ttk.Combobox(driverInfoFrame, textvariable= buggyVar )
     buggyBox['values'] = buggies
-    buggyBox.pack(side = LEFT)
+    buggyBox.pack(padx = pad, pady = pad, side = LEFT)
 
 
     pusherFrame()
@@ -303,7 +306,7 @@ def rollInputScreenRun():
     # save roll button
     global saveRollButton
     saveRollButton = Button(rollInputScreen, text = 'Save Roll Data', command = saveRoll)
-    saveRollButton.pack()
+    saveRollButton.pack(pady = pad)
 
     global error
     error = Label(rollInputScreen, text = "Please Check all Inputs", fg = 'red')
@@ -316,11 +319,11 @@ def rollInputScreenRun():
     global rollListbox
     rollListbox = Listbox(rollInfoFrame, listvariable = stringRolls, width = 25, height = 20)
     updateListbox()
-    rollListbox.pack(side = LEFT)
+    rollListbox.pack(padx = pad, pady = pad, side = LEFT)
 
     global infoLabel
     infoLabel = Label(rollInfoFrame, text ='')
-    infoLabel.pack(side = LEFT)
+    infoLabel.pack(padx = pad, pady = pad, side = LEFT)
     checkSelection()
 
     global delButton

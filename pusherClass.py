@@ -27,6 +27,3 @@ class Pusher:
     
     def __repr__(self):
         return f'{self.name} pushes for {self.ag}, {self.w}, {self.m}'
-    
-Hannah = Pusher('hannah', 1, 1, 0)
-print(Hannah)

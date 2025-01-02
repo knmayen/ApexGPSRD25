@@ -1,4 +1,3 @@
-# from rollClass import *
 import tkinter 
 from tkinter import *
 import tkinter as tk
@@ -7,11 +6,13 @@ import pickle
 
 allPushers = dict()
 pusherNames = []
+global lastPusher
+lastPusher = None
 
+# load pusher data
 pusherFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'rb')
 allPushers = pickle.load(pusherFile)
 pusherFile.close()
-print(allPushers)
 
 def addPusher():
     # take inputs and create pusher object
@@ -26,10 +27,8 @@ def addPusher():
         clearInputs()
         updateListbox()
         storeData()
-        
-    # print(allPushers)
 
-    # clear all input values
+# clear all input values
 def clearInputs():
     nameInput.delete(0, tkinter.END)
     allGender.set(False)
@@ -48,88 +47,102 @@ def storeData():
     pickle.dump(allPushers, file)
     file.close()
 
-def editPusher():
-    print('editing')
-    
+def setPusherCheckboxes():
+    # get name
+    name = nameBox.get(nameBox.curselection()[0])
+    # set edit checkboxes
+    if allPushers[name].ag:
+        agEditButton.select() 
+    else:
+        agEditButton.deselect()
 
+    if allPushers[name].w:
+        wEditButton.select()
+    else:
+        wEditButton.deselect()
+
+    if allPushers[name].m:
+        mEditButton.select()
+    else:
+        mEditButton.deselect()
+
+def savePusherEdits():
+    name = nameBox.get(nameBox.curselection()[0])
+    # take inputs and edit the current pusher object -> don't want to overwrite splits data
+    allPushers[name].ag = allGenderEditing.get()
+    allPushers[name].w = womensEditing.get()
+    allPushers[name].m = mensEditing.get()
+    nameBox.selection_clear(0, tk.END)
+    clearEdits()
+    storeData()
+
+def delPusher():
+    name = nameBox.get(nameBox.curselection()[0])
+    del allPushers[name]
+    updateListbox()
+    storeData()
+    clearEdits()
 
 def pusherInfoDisplay():
+    global lastPusher
     selectedPusher = nameBox.curselection()
-    # print(selectedPusher)
-    allGenderEditing = IntVar()
-    womensEditing = IntVar()
-    mensEditing = IntVar()
-    # allGenderEditing.set(1)
-    agEditButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGenderEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
-    wEditButton = Checkbutton(pusherInputScreen, text = "Womens", variable = womensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
-    mEditButton = Checkbutton(pusherInputScreen, text = "Mens", variable = mensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
-
-    
-    # agEditButton.select()
-    
 
     if selectedPusher != ():
-        # print('selected', selectedPusher, pusherNames)
         name = nameBox.get(selectedPusher[0])
-        print(allPushers[name].w)
-
-        # womensEditing.set(allPushers[name].w)
-        # mensEditing.set(allPushers[name].m)
-
         editLabel.config(text = f'Edit Pusher: {name}')
+        if lastPusher != name: # if the selection is new, update the checkbox values
+            setPusherCheckboxes()
+        lastPusher = name
 
-        # if allPushers[name].ag:
-        #     allGenderEditing = TRUE
-        # else:
-        #     allGenderEditing = FALSE
+        global editX
+        global inputY
+        agEditButton.place(x = editX, y = inputY[1], anchor = 'center')
+        wEditButton.place(x = editX, y = inputY[2], anchor = 'center')
+        mEditButton.place(x = editX, y = inputY[3], anchor = 'center')
+        saveEditsButton.place(x = editX, y = inputY[4], anchor = 'center')
+        delPusherButton.place(x = editX, y = inputY[5], anchor= 'center')
 
-        # if allPushers[name].w:
-        #     womensEditing = TRUE
-        # else:
-        #     womensEditing = FALSE
-
-        # if allPushers[name].m:
-        #     mensEditing = TRUE
-        # else:
-        #     mensEditing = FALSE
-
-        print(allGenderEditing)
-        print(womensEditing)
-        print(mensEditing)
-        print(' ')
-   
     else:
-        editLabel.config(text = '')
-
-        agEditButton.place_forget()
-        wEditButton.place_forget()
-        mEditButton.place_forget()
+        clearEdits()
     
     pusherInputScreen.after(1000, pusherInfoDisplay)
 
-
+def clearEdits():
+    editLabel.config(text = '')
+    agEditButton.place_forget()
+    wEditButton.place_forget()
+    mEditButton.place_forget()
+    saveEditsButton.place_forget()
+    delPusherButton.place_forget()
 
 def pusherInputScreenRun():
     global pusherInputScreen
     pusherInputScreen = tkinter.Tk()
-    pusherInputScreen.geometry(f"{800}x{600}")
-    pusherInputScreen.title('map')
+    width = 800
+    height = 600
+    pusherInputScreen.geometry(f"{width}x{height}")
+    pusherInputScreen.title('Pusher Input')
 
-    pusherInputFrame = Frame(pusherInputScreen)
-    pusherInputFrame.pack()
+    # pusher name input math
+    global inputY
+    inputX = width // 4
+    inputY = []
+    widgets = 8
+    delta = 40
+    totalHeight = widgets * delta
+    topY = (height - totalHeight) / 2
+    for i in range(widgets):
+        inputY.append(topY + delta * i)
 
-    inputFrame = Frame(pusherInputFrame)
-    inputFrame.pack(side = LEFT)
-    # pusher name input
-    lb1 = Label(inputFrame, text = "Pusher Name:")
-    lb1.pack(side = TOP)
+    lb1 = Label(pusherInputScreen, text = "Pusher Name:")
+    lb1.place(x= inputX, y = inputY[0], anchor= 'center')
     global nameInput
-    nameInput = Entry(inputFrame)
-    nameInput.pack(side = TOP)
+    nameInput = Entry(pusherInputScreen)
+    nameInput.place(x = inputX, y = inputY[1], anchor= 'center')
 
     # division checkbuttons
-    lb2 = Label(inputFrame, text = 'Pusher Division:')
-    lb2.pack(side = TOP)
+    lb2 = Label(pusherInputScreen, text = 'Pusher Division:')
+    lb2.place(x = inputX, y = inputY[2], anchor= 'center')
     global allGender
     allGender = IntVar()
     global womens
@@ -137,64 +150,69 @@ def pusherInputScreenRun():
     global mens
     mens = IntVar()
     global agButton
-    agButton = Checkbutton(inputFrame, text = "All Gender", variable = allGender, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    agButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGender, 
+                           onvalue = 1, offvalue = 0, height = 4, width = 10)
     global wButton
-    wButton = Checkbutton(inputFrame, text = "Womens", variable = womens, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    wButton = Checkbutton(pusherInputScreen, text = "Womens", variable = womens, onvalue = 1, offvalue = 0, height = 4, width = 10)
     global mButton
-    mButton = Checkbutton(inputFrame, text = "Mens", variable = mens, onvalue = 1, offvalue = 0, height = 4, width = 10)
-    agButton.pack(side = TOP)
-    wButton.pack(side = TOP)
-    mButton.pack(side = TOP)
+    mButton = Checkbutton(pusherInputScreen, text = "Mens", variable = mens, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    agButton.place(x = inputX, y = inputY[3], anchor= 'center')
+    wButton.place(x = inputX, y = inputY[4], anchor= 'center')
+    mButton.place(x = inputX, y = inputY[5], anchor= 'center')
 
     # add pusher button
-    pusherAdd = Button(inputFrame, text = 'Done', command = addPusher)
-    pusherAdd.pack(side = TOP)
+    pusherAdd = Button(pusherInputScreen, text = 'Done', command = addPusher)
+    pusherAdd.place(x = inputX, y = inputY[6], anchor= 'center')
 
     # lb3 is the error messages
     global lb3
-    lb3 = Label(inputFrame, text = '', fg = 'red')
-    lb3.pack(side = TOP)
+    lb3 = Label(pusherInputScreen, text = '', fg = 'red')
+    lb3.place(x = inputX, y = inputY[7], anchor= 'center')
 
-    currentPusherFrame = Frame(pusherInputFrame)
-    currentPusherFrame.pack(side = LEFT)
-    lb4 = Label(currentPusherFrame, text = 'Current Pushers:')
-    lb4.pack(side = TOP)
-
+    pusherX = width // 2
+    lb4 = Label(pusherInputScreen, text = 'Current Pushers:')
+    lb4.place(x = pusherX, y = inputY[0], anchor= 'center')
 
     stringNames = tkinter.StringVar(value = pusherNames)
     global nameBox
-    nameBox = Listbox(currentPusherFrame, listvariable = stringNames, width = 30, height = 20) #width and height are measured in characters and lines
+    nameBox = Listbox(pusherInputScreen, listvariable = stringNames, width = 30, height = 20) #width and height are measured in characters and lines
     updateListbox()
-    nameBox.pack(side = TOP)
+    nameBox.place(x = pusherX, y = inputY[0] + delta // 2, anchor= 'n')
 
-    # # scroll bars are hard
-    # scrollBar = Scrollbar(pusherInputScreen) 
-    # scrollBar.place(relx = x + .4, rely = .233, height = 16 * 20) 
-    # scrollBar.config(command = nameBox.yview) 
-    # # nameBox.bind("<<ListboxSelect>>", editPusher())
+    # scroll bars are hard
+    scrollBar = Scrollbar(pusherInputScreen) 
+    scrollBar.place(x=pusherX + 5 * 15 , y = inputY[0] + delta // 2 + 2, height = 16 * 20 ) 
+    scrollBar.config(command = nameBox.yview) 
 
-    editFrame = Frame(pusherInputFrame)
-    editFrame.pack(side = LEFT)
+
     global editLabel
-    editLabel = Label(editFrame, text = '')
-    editLabel.pack(side = TOP)
+    global editX
+    editX = width // 4 * 3
+    editLabel = Label(pusherInputScreen, text = '')
+    editLabel.place(x = editX, y = inputY[0], anchor= 'center')
 
-    # allGenderEditing = IntVar()
-    # womensEditing = IntVar()
-    # mensEditing = IntVar()
-    # agEditButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGenderEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
-    # wEditButton = Checkbutton(pusherInputScreen, text = "Womens", variable = womensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
-    # mEditButton = Checkbutton(pusherInputScreen, text = "Mens", variable = mensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
-    # agEditButton.place(relx= x - .08 + .5, rely = .5, anchor=W)
-    # wEditButton.place(relx= x - .08 + .5, rely = .6, anchor=W)
-    # mEditButton.place(relx= x - .08 + .5, rely = .7, anchor=W)
+    global allGenderEditing
+    allGenderEditing = IntVar()
+    global womensEditing
+    womensEditing = IntVar()
+    global mensEditing
+    mensEditing = IntVar()
+    global agEditButton
+    agEditButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGenderEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    global wEditButton
+    wEditButton = Checkbutton(pusherInputScreen, text = "Womens", variable = womensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
+    global mEditButton
+    mEditButton = Checkbutton(pusherInputScreen, text = "Mens", variable = mensEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
 
+    global saveEditsButton
+    saveEditsButton = Button(pusherInputScreen, text = 'Save Edits', command=savePusherEdits)
 
-    # pusherInfoDisplay()
+    global delPusherButton
+    delPusherButton = Button(pusherInputScreen, text = 'Delete Pusher', command= delPusher)
 
-    # print(nameBox.curselection)
+    pusherInfoDisplay()
 
 
     pusherInputScreen.mainloop()
 
-pusherInputScreenRun()
+# pusherInputScreenRun()
