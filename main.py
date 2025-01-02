@@ -5,6 +5,9 @@ import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
 
+def p():
+    return 42
+
 def mainScreenRun():
     pad = 10
 
@@ -29,11 +32,13 @@ def mainScreenRun():
     mapRolls = Button(mainScreen, text = 'Map Rolls', command= mapScreenRun)
     mapRolls.pack(pady = pad)
 
-    # global seePusherTimes
+    global seePusherTimes
+    seePusherTimes = Button(mainScreen, text = 'See Times', command = p)
+    seePusherTimes.pack(pady = pad)
 
-    img = ImageTk.PhotoImage(Image.open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\ApexLogoRed.png"))
-    logo = Label(mainScreen, image= img)
-    logo.pack(side = 'bottom', fill = 'both', expand = 'No')
+    # img = ImageTk.PhotoImage(Image.open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\ApexLogoRed.png"))
+    # logo = Label(mainScreen, image= img)
+    # logo.pack(side = 'bottom', fill = 'both', expand = 'No')
 
 
     mainScreen.mainloop()
