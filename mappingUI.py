@@ -54,11 +54,16 @@ def drawHandoffs(roll):
         lon = roll.splitsDict[key][2]
         marker = mapWidget.set_marker(lat, lon)
 
+def back():
+    mapScreen.destroy()
 
 def mapScreenRun():
     # actual screen calls
+    global mapScreen
     mapScreen = tkinter.Tk()
-    mapScreen.geometry(f"{800}x{600}")
+    width = 800
+    height = 600
+    mapScreen.geometry(f"{width}x{height}")
     mapScreen.title('map')
 
     global mapWidget
@@ -74,6 +79,10 @@ def mapScreenRun():
     drawPoints(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
     drawTransitions(mashpeeCoords)
     drawHandoffs(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
+
+    global backButton 
+    backButton = Button(mapScreen, text = 'Back', command = back)
+    backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
     mapScreen.mainloop()
 

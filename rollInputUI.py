@@ -244,6 +244,9 @@ def deletePusherSplits(selection):
             pusher = roll.info[person]
             del allPushers[pusher].times[person][selection]          
 
+def back():
+    rollInputScreen.destroy()
+
 # actual screen
 def rollInputScreenRun():
     global pad
@@ -329,7 +332,11 @@ def rollInputScreenRun():
     global delButton
     delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
 
+    global backButton 
+    backButton = Button(rollInputScreen, text = 'Back', command = back)
+    backButton.pack(padx = pad * 10, side= RIGHT)
+
 
     rollInputScreen.mainloop()
 
-# rollInputScreenRun()
+rollInputScreenRun()

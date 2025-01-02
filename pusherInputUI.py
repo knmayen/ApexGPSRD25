@@ -115,6 +115,9 @@ def clearEdits():
     saveEditsButton.place_forget()
     delPusherButton.place_forget()
 
+def back():
+    pusherInputScreen.destroy()
+
 def pusherInputScreenRun():
     global pusherInputScreen
     pusherInputScreen = tkinter.Tk()
@@ -211,6 +214,10 @@ def pusherInputScreenRun():
     delPusherButton = Button(pusherInputScreen, text = 'Delete Pusher', command= delPusher)
 
     pusherInfoDisplay()
+
+    global backButton 
+    backButton = Button(pusherInputScreen, text = 'Back', command = back)
+    backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
 
     pusherInputScreen.mainloop()
