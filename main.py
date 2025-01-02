@@ -1,6 +1,7 @@
 from mappingUI import mapScreenRun
 from rollInputUI import rollInputScreenRun
 from pusherInputUI import pusherInputScreenRun
+from timeDataDisplayUI import timesDisplayScreenRun
 import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
@@ -29,9 +30,9 @@ def mainScreenRun():
     mapRolls = Button(mainScreen, text = 'Map Rolls', command= mapScreenRun)
     mapRolls.pack(pady = pad)
 
-    # global seePusherTimes
-    # seePusherTimes = Button(mainScreen, text = 'See Times', command = p)
-    # seePusherTimes.pack(pady = pad)
+    global seePusherTimes
+    seePusherTimes = Button(mainScreen, text = 'See Times', command = timesDisplayScreenRun)
+    seePusherTimes.pack(pady = pad)
 
     # img = ImageTk.PhotoImage(Image.open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\ApexLogoRed.png"))
     # logo = Label(mainScreen, image= img)
