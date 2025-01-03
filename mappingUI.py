@@ -7,6 +7,7 @@ from rollClass import *
 import os
 from CoordinateData import *
 from rollInputUI import allRolls
+from commonFunctions import *
 
 buggyColors = {
                 'Solaris' : 'blue',
@@ -54,8 +55,6 @@ def drawHandoffs(roll):
         lon = roll.splitsDict[key][2]
         marker = mapWidget.set_marker(lat, lon)
 
-def back():
-    mapScreen.destroy()
 
 def mapScreenRun():
     # actual screen calls
@@ -81,7 +80,7 @@ def mapScreenRun():
     drawHandoffs(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
 
     global backButton 
-    backButton = Button(mapScreen, text = 'Back', command = back)
+    backButton = Button(mapScreen, text = 'Back', command = lambda: back(mapScreen))
     backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
     mapScreen.mainloop()

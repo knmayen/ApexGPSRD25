@@ -2,6 +2,7 @@ import tkinter
 from tkinter import *
 import tkinter as tk
 from tkinter import ttk
+from commonFunctions import *
 
 allCells = []
 topCols = ['name', 
@@ -41,27 +42,24 @@ def getTopLeft(r, c, cellWidth, cellHeight):
     y0 = topY + r * cellHeight 
     return (x0, y0)
 
-def back():
-    timesDisplayScreen.destroy()
-
 def displaySelectionFrame():
     pad = 20
     selectionFrame = Frame(canvas)
     selectionFrame.place(x = appWidth // 2, y = topY // 2, anchor = 'center')
     lb1 = Label(selectionFrame, text = 'Divisions: ')
     lb1.pack(side = LEFT, padx= pad)
-    allGender = IntVar()
-    agCheckbox = Checkbutton(selectionFrame, text = "All Gender", variable = allGender, 
+    agDivision = IntVar()
+    agDivisionBox = Checkbutton(selectionFrame, text = "All Gender", variable = agDivision, 
                            onvalue = 1, offvalue = 0)
-    agCheckbox.pack(side = LEFT, padx= pad)
-    womens = IntVar()
-    wCheckbox = Checkbutton(selectionFrame, text = "Womens", variable = womens, 
+    agDivisionBox.pack(side = LEFT, padx= pad)
+    wDivision = IntVar()
+    wDivisionBox = Checkbutton(selectionFrame, text = "Womens", variable = wDivision, 
                            onvalue = 1, offvalue = 0)
-    wCheckbox.pack(side = LEFT, padx= pad)
-    mens = IntVar()
-    mCheckbox = Checkbutton(selectionFrame, text = "Mens", variable = mens, 
+    wDivisionBox.pack(side = LEFT, padx= pad)
+    mDivision = IntVar()
+    mDivisionBox = Checkbutton(selectionFrame, text = "Mens", variable = mDivision, 
                            onvalue = 1, offvalue = 0)
-    mCheckbox.pack(side = LEFT, padx= pad)
+    mDivisionBox.pack(side = LEFT, padx= pad)
 
     lb2 = Label(selectionFrame, text = 'Sort By:')
     lb2.pack(side=LEFT)
@@ -106,8 +104,8 @@ def timesDisplayScreenRun():
 
 
     global backButton 
-    backButton = Button(canvas, text = 'Back', command = back)
+    backButton = Button(canvas, text = 'Back', command = lambda : back(timesDisplayScreen))
 
     timesDisplayScreen.mainloop()
 
-timesDisplayScreenRun()
+# timesDisplayScreenRun()

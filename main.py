@@ -1,10 +1,13 @@
 from mappingUI import mapScreenRun
 from rollInputUI import rollInputScreenRun
-from pusherInputUI import pusherInputScreenRun
+from pusherInputUI import *
 from timeDataDisplayUI import timesDisplayScreenRun
 import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
+from commonFunctions import *
+
+loadData()
 
 def mainScreenRun():
     pad = 10

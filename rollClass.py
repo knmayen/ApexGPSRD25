@@ -109,7 +109,7 @@ class Roll:
         # get the start time as the starting timestamp
         self.hillTimes['Start'] = self.hillTimes['Start'].strftime("%H:%M:%S")
 
-        
+allRolls = dict()
             
 ########################################### TESTING DATA AND CALLS ##########################################################
 

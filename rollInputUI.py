@@ -6,19 +6,13 @@ from tkinter import ttk
 from rollClass import Roll
 from pusherClass import Pusher
 import pandas
+from commonFunctions import *
 
 # load pusher data, get all of the pusher names in a sorted list
-pusherFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'rb')
-allPushers = pickle.load(pusherFile)
-pusherFile.close()
-
 pusherNames = [key for key in allPushers]
 pusherNames.sort()
 
-# load rolls Data
-rollFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'rb')
-allRolls = pickle.load(rollFile)
-rollFile.close()
+
 
 # driver and buggy data
 drivers = ['Maggie', 'Bella', 'Sara', 'Lily', 'Emma']
@@ -76,10 +70,10 @@ def saveRoll():
         print(allRolls)
         error.pack_forget()
 
-        clearInputs()
+        clearRollInputs()
         assignSplits(date, tag, infoDict)
         storeData()
-        updateListbox()
+        updateRollListbox()
 
     else:
         if not error.winfo_ismapped():
@@ -124,7 +118,7 @@ def getDriverTag(driver):
         lastInitial = 'B'
     return driver[0] + lastInitial
 
-def clearInputs():
+def clearRollInputs():
     boxes = [driverBox, buggyBox] + hillBoxes
 
     for box in boxes:
@@ -151,17 +145,6 @@ def assignSplits(date, tag, infoDict):
         if hill == 'hill1' or hill == 'hill2':
              allPushers[str(pusher)].times['Freeroll'].update({tag : allRolls[date][infoDict['driver']][tag].hillTimes['Freeroll']})
 
-def storeData():
-    file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'wb')
-    # pickle.dump(allPushers, file)
-    pickle.dump(dict(), file)
-    file.close()
-
-    file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
-    # pickle.dump(allRolls, file)
-    pickle.dump(dict(), file)
-    file.close()
-
 def pusherFrame():
     lb6 = Label(rollInputScreen, text = 'Pusher Input')
     lb6.pack()
@@ -179,7 +162,7 @@ def pusherFrame():
         box['values'] = pusherNames
         box.pack(side=LEFT)
 
-def updateListbox():
+def updateRollListbox():
     global allTags
     rollListbox.delete(0, tkinter.END)  # Clear the existing items
     allTags.sort()
@@ -228,7 +211,7 @@ def deleteRoll(dict = allRolls):
                 del dict[selection]
                 allTags.remove(selection)
                 storeData()
-                updateListbox()
+                updateRollListbox()
                 infoLabel.config(text = ' ')
                 delButton.pack_forget()
                 return True
@@ -243,9 +226,6 @@ def deletePusherSplits(selection):
         if 'hill' in person:
             pusher = roll.info[person]
             del allPushers[pusher].times[person][selection]          
-
-def back():
-    rollInputScreen.destroy()
 
 # actual screen
 def rollInputScreenRun():
@@ -321,7 +301,7 @@ def rollInputScreenRun():
     stringRolls = tkinter.StringVar(value = allTags)
     global rollListbox
     rollListbox = Listbox(rollInfoFrame, listvariable = stringRolls, width = 25, height = 20)
-    updateListbox()
+    updateRollListbox()
     rollListbox.pack(padx = pad, pady = pad, side = LEFT)
 
     global infoLabel
@@ -333,10 +313,10 @@ def rollInputScreenRun():
     delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
 
     global backButton 
-    backButton = Button(rollInputScreen, text = 'Back', command = back)
+    backButton = Button(rollInputScreen, text = 'Back', command = lambda : back(rollInputScreen))
     backButton.pack(padx = pad * 10, side= RIGHT)
 
 
     rollInputScreen.mainloop()
 
-rollInputScreenRun()
+# rollInputScreenRun()

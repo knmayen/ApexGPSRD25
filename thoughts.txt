@@ -79,6 +79,7 @@ possible issues:
 (this then turned into an issue log)
 
 - the pandas reading csv did not include the seconds for time
+    - ended up changing back to reading a txt file, it just worked easier, but am still using pandas. also used %H:%M:%S which helped
 
 - how to do the actual timing line crossing algoritum
     - create lines between two points of the outer bounds of the transition zone lines
@@ -95,3 +96,32 @@ possible issues:
                     points" dictionary. Then I find the best point out of the close points and use that
         - then store time and move on to next transition zone line
         - then take the base time and calculate splits based on it
+            - this was done with the datetime module, and the start time holds the start, finish holds whole roll, all other times hold 
+                the elapsed time of the segment
+
+- i want to have each of the pusher names as the object for the pusher class, but this is proving to be an issue
+    - with double names and last initials, it might be more feasable to assign each of them a code, but there might be a way around it
+    - answer: i used a dictionary where the keys are the names and the values are the pusher objects, use allPushers['name'].property
+        to access the properties of the pushers
+
+- also will probably need a pusher edit feature
+
+- is there an easy way to add all of our existing pushers in?
+    - ith the current way of loading pushers works out fine, and is relitivly intuitve
+    - i need to work on the edit feature for the pushers
+
+- all of the rolls are stored on in a set, because they don't necesarily need names 
+    - this might change later on
+    - this did change, it is now a dictionary with tags
+
+- i need to get more data  
+    - some of this should be on the garmins -> tommorow problem
+
+- each roll has the tag of date-driverInitials-first3LettersOfBuggy-roll# and is stored in allRolls
+- allRolls is the master dictionary, with its keys being dates. these values are subdictionaries with the driver name as keys, and the values
+    are dictionaries with the tags as keys to the roll objects
+
+- there should be a feature where two rolls cannot be the same
+
+- also there should be more thought in assigning pushers to rolls 
+    - ie when there is no hill 1, and iron man, ect

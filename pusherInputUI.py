@@ -3,49 +3,42 @@ from tkinter import *
 import tkinter as tk
 from pusherClass import *
 import pickle
+from commonFunctions import *
 
-allPushers = dict()
 pusherNames = []
 global lastPusher
 lastPusher = None
 
-# load pusher data
-pusherFile = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'rb')
-allPushers = pickle.load(pusherFile)
-pusherFile.close()
-
+loadData()
+print(allPushers)
 def addPusher():
     # take inputs and create pusher object
     name = nameInput.get()
 
     if name in allPushers:
-        clearInputs()
+        clearPusherInputs()
         lb3.config(text = 'Name Already Taken')
     else:
         lb3.config(text = '')
         allPushers[name] = Pusher(name, allGender.get(), womens.get(), mens.get())
-        clearInputs()
-        updateListbox()
+        clearPusherInputs()
+        updatePusherListbox()
         storeData()
+        print(allPushers)
 
 # clear all input values
-def clearInputs():
+def clearPusherInputs():
     nameInput.delete(0, tkinter.END)
     allGender.set(False)
     womens.set(False)
     mens.set(False)
 
-def updateListbox():
+def updatePusherListbox():
     pusherNames = [str(name) for name in allPushers] # Update your list here
     pusherNames.sort()
     nameBox.delete(0, tkinter.END)  # Clear the existing items
     for item in pusherNames:
         nameBox.insert(tkinter.END, item)
-
-def storeData():
-    file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'wb')
-    pickle.dump(allPushers, file)
-    file.close()
 
 def setPusherCheckboxes():
     # get name
@@ -91,11 +84,12 @@ def savePusherEdits():
     nameBox.selection_clear(0, tk.END)
     clearEdits()
     storeData()
+    print(allPushers)
 
 def delPusher():
     name = nameBox.get(nameBox.curselection()[0])
     del allPushers[name]
-    updateListbox()
+    updatePusherListbox()
     storeData()
     clearEdits()
 
@@ -130,9 +124,6 @@ def clearEdits():
     mEditButton.place_forget()
     saveEditsButton.place_forget()
     delPusherButton.place_forget()
-
-def back():
-    pusherInputScreen.destroy()
 
 def pusherInputScreenRun():
     global pusherInputScreen
@@ -195,7 +186,7 @@ def pusherInputScreenRun():
     stringNames = tkinter.StringVar(value = pusherNames)
     global nameBox
     nameBox = Listbox(pusherInputScreen, listvariable = stringNames, width = 30, height = 20) #width and height are measured in characters and lines
-    updateListbox()
+    updatePusherListbox()
     nameBox.place(x = pusherX, y = inputY[0] + delta // 2, anchor= 'n')
 
     # scroll bars are hard
@@ -232,7 +223,7 @@ def pusherInputScreenRun():
     pusherInfoDisplay()
 
     global backButton 
-    backButton = Button(pusherInputScreen, text = 'Back', command = back)
+    backButton = Button(pusherInputScreen, text = 'Back', command = lambda: back(pusherInputScreen))
     backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
 
