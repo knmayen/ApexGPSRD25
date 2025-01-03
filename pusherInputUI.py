@@ -68,10 +68,26 @@ def setPusherCheckboxes():
 
 def savePusherEdits():
     name = nameBox.get(nameBox.curselection()[0])
+
     # take inputs and edit the current pusher object -> don't want to overwrite splits data
     allPushers[name].ag = allGenderEditing.get()
+    if allPushers[name].ag:
+        Pusher.allGender.add(name)
+    elif name in Pusher.allGender:
+        Pusher.allGender.remove(name)
+
     allPushers[name].w = womensEditing.get()
+    if allPushers[name].w:
+        Pusher.womens.add(name)
+    elif name in Pusher.womens:
+        Pusher.womens.remove(name)
+
     allPushers[name].m = mensEditing.get()
+    if allPushers[name].m:
+        Pusher.mens.add(name)
+    elif name in Pusher.mens:
+        Pusher.mens.remove(name)
+    
     nameBox.selection_clear(0, tk.END)
     clearEdits()
     storeData()
@@ -222,4 +238,4 @@ def pusherInputScreenRun():
 
     pusherInputScreen.mainloop()
 
-# pusherInputScreenRun()
+pusherInputScreenRun()

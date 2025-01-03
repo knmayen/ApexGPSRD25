@@ -153,13 +153,13 @@ def assignSplits(date, tag, infoDict):
 
 def storeData():
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\pusherPickle", 'wb')
-    pickle.dump(allPushers, file)
-    # pickle.dump(dict(), file)
+    # pickle.dump(allPushers, file)
+    pickle.dump(dict(), file)
     file.close()
 
     file = open(r"C:\Users\knmay\OneDrive\Documents\GitHub\ApexGPSRD25\rollPickle", 'wb')
-    pickle.dump(allRolls, file)
-    # pickle.dump(dict(), file)
+    # pickle.dump(allRolls, file)
+    pickle.dump(dict(), file)
     file.close()
 
 def pusherFrame():
