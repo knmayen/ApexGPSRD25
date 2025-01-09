@@ -4,37 +4,44 @@ import tkinter as tk
 from pusherClass import *
 import pickle
 from commonFunctions import *
+import config
 
 pusherNames = []
 global lastPusher
 lastPusher = None
 
-loadData()
-print(allPushers)
+
+
+# loadData()
+# print(allPushers)
 def addPusher():
+    global allGender
+    global womens
+    global mens
     # take inputs and create pusher object
     name = nameInput.get()
 
-    if name in allPushers:
+    if name in config.allPushers:
         clearPusherInputs()
         lb3.config(text = 'Name Already Taken')
-    else:
+    elif name != '':
         lb3.config(text = '')
-        allPushers[name] = Pusher(name, allGender.get(), womens.get(), mens.get())
+        print(allGender.get(), womens.get(), mens.get())
+        config.allPushers[name] = Pusher(name, allGender.get(), womens.get(), mens.get())
         clearPusherInputs()
         updatePusherListbox()
         storeData()
-        print(allPushers)
+        print(config.allPushers)
 
 # clear all input values
 def clearPusherInputs():
     nameInput.delete(0, tkinter.END)
-    allGender.set(False)
-    womens.set(False)
-    mens.set(False)
+    allGender.set(0)
+    womens.set(0)
+    mens.set(0)
 
 def updatePusherListbox():
-    pusherNames = [str(name) for name in allPushers] # Update your list here
+    pusherNames = [str(name) for name in config.allPushers] # Update your list here
     pusherNames.sort()
     nameBox.delete(0, tkinter.END)  # Clear the existing items
     for item in pusherNames:
@@ -44,17 +51,17 @@ def setPusherCheckboxes():
     # get name
     name = nameBox.get(nameBox.curselection()[0])
     # set edit checkboxes
-    if allPushers[name].ag:
+    if config.allPushers[name].ag:
         agEditButton.select() 
     else:
         agEditButton.deselect()
 
-    if allPushers[name].w:
+    if config.allPushers[name].w:
         wEditButton.select()
     else:
         wEditButton.deselect()
 
-    if allPushers[name].m:
+    if config.allPushers[name].m:
         mEditButton.select()
     else:
         mEditButton.deselect()
@@ -63,32 +70,32 @@ def savePusherEdits():
     name = nameBox.get(nameBox.curselection()[0])
 
     # take inputs and edit the current pusher object -> don't want to overwrite splits data
-    allPushers[name].ag = allGenderEditing.get()
-    if allPushers[name].ag:
-        Pusher.allGender.add(name)
-    elif name in Pusher.allGender:
-        Pusher.allGender.remove(name)
+    config.allPushers[name].ag = allGenderEditing.get()
+    # if config.allPushers[name].ag:
+    #     Pusher.allGender.add(name)
+    # elif name in Pusher.allGender:
+    #     Pusher.allGender.remove(name)
 
-    allPushers[name].w = womensEditing.get()
-    if allPushers[name].w:
-        Pusher.womens.add(name)
-    elif name in Pusher.womens:
-        Pusher.womens.remove(name)
+    config.allPushers[name].w = womensEditing.get()
+    # if config.allPushers[name].w:
+    #     Pusher.womens.add(name)
+    # elif name in Pusher.womens:
+    #     Pusher.womens.remove(name)
 
-    allPushers[name].m = mensEditing.get()
-    if allPushers[name].m:
-        Pusher.mens.add(name)
-    elif name in Pusher.mens:
-        Pusher.mens.remove(name)
+    config.allPushers[name].m = mensEditing.get()
+    # if config.allPushers[name].m:
+    #     Pusher.mens.add(name)
+    # elif name in Pusher.mens:
+    #     Pusher.mens.remove(name)
     
     nameBox.selection_clear(0, tk.END)
     clearEdits()
     storeData()
-    print(allPushers)
+    print(config.allPushers)
 
 def delPusher():
     name = nameBox.get(nameBox.curselection()[0])
-    del allPushers[name]
+    del config.allPushers[name]
     updatePusherListbox()
     storeData()
     clearEdits()
@@ -153,12 +160,14 @@ def pusherInputScreenRun():
     # division checkbuttons
     lb2 = Label(pusherInputScreen, text = 'Pusher Division:')
     lb2.place(x = inputX, y = inputY[2], anchor= 'center')
+    
     global allGender
-    allGender = IntVar()
+    allGender = IntVar(pusherInputScreen)
     global womens
-    womens = IntVar()
+    womens = IntVar(pusherInputScreen)
     global mens
-    mens = IntVar()
+    mens = IntVar(pusherInputScreen)
+
     global agButton
     agButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGender, 
                            onvalue = 1, offvalue = 0, height = 4, width = 10)
@@ -202,11 +211,11 @@ def pusherInputScreenRun():
     editLabel.place(x = editX, y = inputY[0], anchor= 'center')
 
     global allGenderEditing
-    allGenderEditing = IntVar()
+    allGenderEditing = IntVar(pusherInputScreen)
     global womensEditing
-    womensEditing = IntVar()
+    womensEditing = IntVar(pusherInputScreen)
     global mensEditing
-    mensEditing = IntVar()
+    mensEditing = IntVar(pusherInputScreen)
     global agEditButton
     agEditButton = Checkbutton(pusherInputScreen, text = "All Gender", variable = allGenderEditing, onvalue = 1, offvalue = 0, height = 4, width = 10)
     global wEditButton
@@ -222,11 +231,11 @@ def pusherInputScreenRun():
 
     pusherInfoDisplay()
 
-    global backButton 
-    backButton = Button(pusherInputScreen, text = 'Back', command = lambda: back(pusherInputScreen))
-    backButton.place(x = width - 50, y = height - 50, anchor = "center")
+    # global backButton 
+    # backButton = Button(pusherInputScreen, text = 'Back', command = lambda: back(pusherInputScreen))
+    # backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
 
     pusherInputScreen.mainloop()
 
-pusherInputScreenRun()
+# pusherInputScreenRun()

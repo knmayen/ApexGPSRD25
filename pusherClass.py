@@ -1,28 +1,25 @@
 class Pusher:
 
-    allGender = set()
-    womens = set()
-    mens = set()
+    # allGender = set()
+    # womens = set()
+    # mens = set()
 
     def __init__(self, name, ag, w, m):
         self.name = name
         if ag == 1:
-            self.ag = True
-            Pusher.allGender.add(name)
+            self.ag = 1
         else:
-            self.ag = False
+            self.ag = 0
 
         if w == 1:
-            self.w = True
-            Pusher.womens.add(name)
+            self.w = 1
         else:
-            self.w = False
+            self.w = 0
 
         if m == 1:
-            self.m = True
-            Pusher.mens.add(name)
+            self.m = 1
         else:
-            self.m = False
+            self.m = 0
         
         self.times = {
             'hill1' : dict(),
@@ -35,5 +32,3 @@ class Pusher:
     
     def __repr__(self):
         return f'{self.name} pushes for {self.ag}, {self.w}, {self.m}'
-
-allPushers = dict()

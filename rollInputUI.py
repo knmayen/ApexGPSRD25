@@ -1,16 +1,13 @@
-import pickle
 import tkinter
 from tkinter import *
 from tkinter import filedialog as fd
 from tkinter import ttk 
-from rollClass import Roll
+from rollClass import *
 from pusherClass import Pusher
+from pusherInputUI import *
 import pandas
 from commonFunctions import *
-
-# load pusher data, get all of the pusher names in a sorted list
-pusherNames = [key for key in allPushers]
-pusherNames.sort()
+import config
 
 
 
@@ -30,7 +27,7 @@ def getAllTags(dict, tags = []):
             tags =  getAllTags(dict[key], tags)
     return tags
 
-allTags = getAllTags(allRolls)
+allTags = getAllTags(config.allRolls)
 
 
 def addRollFile():
@@ -65,9 +62,9 @@ def saveRoll():
         
         # add to dictionary
         createSubdictionaries(date, infoDict, tag)
-        allRolls[date][infoDict['driver']][tag] = Roll(gpx, infoDict, filename)
+        config.allRolls[date][infoDict['driver']][tag] = Roll(gpx, infoDict, filename)
         allTags.append(tag)
-        print(allRolls)
+        print(config.allRolls)
         error.pack_forget()
 
         clearRollInputs()
@@ -81,10 +78,10 @@ def saveRoll():
 
 # creates the subdictionary branches to insert data into
 def createSubdictionaries(date, infoDict, tag):
-    allRolls[date] = allRolls.get(date, dict())
+    config.allRolls[date] = config.allRolls.get(date, dict())
     driver = infoDict['driver']
-    allRolls[date][driver] = allRolls[date].get(driver, dict())
-    allRolls[date][driver][tag] = allRolls[date][driver].get(tag, dict())
+    config.allRolls[date][driver] = config.allRolls[date].get(driver, dict())
+    config.allRolls[date][driver][tag] = config.allRolls[date][driver].get(tag, dict())
 
 # checks to see if all inputs are made correctly in order to make a roll entry
 def checkInputs():
@@ -141,9 +138,9 @@ def assignSplits(date, tag, infoDict):
         # pusher hill properties are a dictionary of hills with nested dicts, inseter tag : time
     for pusher in revDict:
         hill = revDict[pusher]
-        allPushers[str(pusher)].times[hill].update({tag : allRolls[date][infoDict['driver']][tag].hillTimes[hill]})
+        config.allPushers[str(pusher)].times[hill].update({tag : config.allRolls[date][infoDict['driver']][tag].hillTimes[hill]})
         if hill == 'hill1' or hill == 'hill2':
-             allPushers[str(pusher)].times['Freeroll'].update({tag : allRolls[date][infoDict['driver']][tag].hillTimes['Freeroll']})
+             config.allPushers[str(pusher)].times['Freeroll'].update({tag : config.allRolls[date][infoDict['driver']][tag].hillTimes['Freeroll']})
 
 def pusherFrame():
     lb6 = Label(rollInputScreen, text = 'Pusher Input')
@@ -151,6 +148,9 @@ def pusherFrame():
 
     pusherInfoFrame = Frame(rollInputScreen)
     pusherInfoFrame.pack()
+
+    pusherNames = [key for key in config.allPushers]
+    pusherNames.sort()
     
     for i in range(1, 6):
         lb = Label(pusherInfoFrame, text = f"Hill {i}: ")
@@ -179,7 +179,7 @@ def checkSelection():
 def showRollInfo(selection):
     global pad
     tag = allTags[selection[0]]
-    roll = findRoll(allRolls, tag)
+    roll = findRoll(config.allRolls, tag)
     infoString = createInfoString(roll)
     infoLabel.config(text = infoString)
     delButton.pack(padx = pad, pady = pad, side = LEFT)
@@ -201,7 +201,7 @@ def createInfoString(roll):
         result = result + f'{str(key)}: {roll.info[str(key)]} \n'
     return result
 
-def deleteRoll(dict = allRolls):
+def deleteRoll(dict = config.allRolls):
     if rollListbox.curselection() != ():
         selection = rollListbox.curselection()
         selection = allTags[selection[0]]
@@ -221,11 +221,11 @@ def deleteRoll(dict = allRolls):
                     return solution
 
 def deletePusherSplits(selection):
-    roll = findRoll(allRolls, selection)
+    roll = findRoll(config.allRolls, selection)
     for person in roll.info:
         if 'hill' in person:
             pusher = roll.info[person]
-            del allPushers[pusher].times[person][selection]          
+            del config.allPushers[pusher].times[person][selection]          
 
 # actual screen
 def rollInputScreenRun():
@@ -312,9 +312,9 @@ def rollInputScreenRun():
     global delButton
     delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
 
-    global backButton 
-    backButton = Button(rollInputScreen, text = 'Back', command = lambda : back(rollInputScreen))
-    backButton.pack(padx = pad * 10, side= RIGHT)
+    # global backButton 
+    # backButton = Button(rollInputScreen, text = 'Back', command = lambda : back(rollInputScreen))
+    # backButton.pack(padx = pad * 10, side= RIGHT)
 
 
     rollInputScreen.mainloop()

@@ -6,7 +6,6 @@ from PIL import Image, ImageTk
 from rollClass import *
 import os
 from CoordinateData import *
-from rollInputUI import allRolls
 from commonFunctions import *
 
 buggyColors = {
@@ -75,13 +74,13 @@ def mapScreenRun():
     mapWidget.set_zoom(18)
 
     # drawDots(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
-    drawPoints(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
-    drawTransitions(mashpeeCoords)
-    drawHandoffs(allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
+    # drawPoints(config.allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
+    # drawTransitions(mashpeeCoords)
+    # drawHandoffs(config.allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
 
-    global backButton 
-    backButton = Button(mapScreen, text = 'Back', command = lambda: back(mapScreen))
-    backButton.place(x = width - 50, y = height - 50, anchor = "center")
+    # global backButton 
+    # backButton = Button(mapScreen, text = 'Back', command = lambda: back(mapScreen))
+    # backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
     mapScreen.mainloop()
 

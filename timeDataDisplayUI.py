@@ -103,8 +103,8 @@ def timesDisplayScreenRun():
     drawGrid()
 
 
-    global backButton 
-    backButton = Button(canvas, text = 'Back', command = lambda : back(timesDisplayScreen))
+    # global backButton 
+    # backButton = Button(canvas, text = 'Back', command = lambda : back(timesDisplayScreen))
 
     timesDisplayScreen.mainloop()
 
