@@ -3,11 +3,11 @@ from tkinter import *
 from tkinter import filedialog as fd
 from tkinter import ttk 
 from rollClass import *
-from pusherClass import Pusher
 from pusherInputUI import *
 import pandas
 from commonFunctions import *
 import config
+from pusherClass import *
 
 
 
@@ -141,7 +141,7 @@ def assignSplits(date, tag, infoDict):
         config.allPushers[str(pusher)].times[hill].update({tag : config.allRolls[date][infoDict['driver']][tag].hillTimes[hill]})
         if hill == 'hill1' or hill == 'hill2':
              config.allPushers[str(pusher)].times['Freeroll'].update({tag : config.allRolls[date][infoDict['driver']][tag].hillTimes['Freeroll']})
-
+    
 def pusherFrame():
     lb6 = Label(rollInputScreen, text = 'Pusher Input')
     lb6.pack()
@@ -312,9 +312,8 @@ def rollInputScreenRun():
     global delButton
     delButton = Button(rollInfoFrame, text = 'Delete Roll', command = deleteRoll)
 
-    # global backButton 
-    # backButton = Button(rollInputScreen, text = 'Back', command = lambda : back(rollInputScreen))
-    # backButton.pack(padx = pad * 10, side= RIGHT)
+    backButton = Button(rollInputScreen, text = 'Back', command = lambda : back(rollInputScreen))
+    backButton.pack(padx = pad * 10, side= RIGHT)
 
 
     rollInputScreen.mainloop()

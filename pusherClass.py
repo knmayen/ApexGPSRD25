@@ -6,20 +6,9 @@ class Pusher:
 
     def __init__(self, name, ag, w, m):
         self.name = name
-        if ag == 1:
-            self.ag = 1
-        else:
-            self.ag = 0
-
-        if w == 1:
-            self.w = 1
-        else:
-            self.w = 0
-
-        if m == 1:
-            self.m = 1
-        else:
-            self.m = 0
+        self.ag = ag
+        self.w = w
+        self.m = m
         
         self.times = {
             'hill1' : dict(),
@@ -29,6 +18,29 @@ class Pusher:
             "hill4" : dict(),
             'hill5' : dict(),
         }
+
+        self.bestTimes = {
+            'hill1' : (None, None),
+            'hill2' : (None, None),
+            'Freeroll' : (None, None),
+            'hill3' : (None, None),
+            "hill4" : (None, None),
+            'hill5' : (None, None)
+        }
+
+        self.avgTimes = {
+            'hill1' : None,
+            'hill2' : None,
+            'Freeroll' : None,
+            'hill3' : None,
+            "hill4" : None,
+            'hill5' : None
+        }
+        print(self.bestTimes, self.avgTimes)
     
     def __repr__(self):
         return f'{self.name} pushes for {self.ag}, {self.w}, {self.m}'
+    
+    
+
+

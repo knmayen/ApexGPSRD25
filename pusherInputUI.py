@@ -71,23 +71,13 @@ def savePusherEdits():
 
     # take inputs and edit the current pusher object -> don't want to overwrite splits data
     config.allPushers[name].ag = allGenderEditing.get()
-    # if config.allPushers[name].ag:
-    #     Pusher.allGender.add(name)
-    # elif name in Pusher.allGender:
-    #     Pusher.allGender.remove(name)
+
 
     config.allPushers[name].w = womensEditing.get()
-    # if config.allPushers[name].w:
-    #     Pusher.womens.add(name)
-    # elif name in Pusher.womens:
-    #     Pusher.womens.remove(name)
+
 
     config.allPushers[name].m = mensEditing.get()
-    # if config.allPushers[name].m:
-    #     Pusher.mens.add(name)
-    # elif name in Pusher.mens:
-    #     Pusher.mens.remove(name)
-    
+
     nameBox.selection_clear(0, tk.END)
     clearEdits()
     storeData()
@@ -118,6 +108,8 @@ def pusherInfoDisplay():
         mEditButton.place(x = editX, y = inputY[3], anchor = 'center')
         saveEditsButton.place(x = editX, y = inputY[4], anchor = 'center')
         delPusherButton.place(x = editX, y = inputY[5], anchor= 'center')
+
+        print(config.allPushers[name].avgTimes)
 
     else:
         clearEdits()
@@ -231,9 +223,8 @@ def pusherInputScreenRun():
 
     pusherInfoDisplay()
 
-    # global backButton 
-    # backButton = Button(pusherInputScreen, text = 'Back', command = lambda: back(pusherInputScreen))
-    # backButton.place(x = width - 50, y = height - 50, anchor = "center")
+    backButton = Button(pusherInputScreen, text = 'Back', command = lambda: back(pusherInputScreen))
+    backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
 
     pusherInputScreen.mainloop()

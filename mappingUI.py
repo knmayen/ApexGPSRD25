@@ -78,9 +78,8 @@ def mapScreenRun():
     # drawTransitions(mashpeeCoords)
     # drawHandoffs(config.allRolls['2024-12-29']['Emma']['2024-12-29-EB-Mol-3'])
 
-    # global backButton 
-    # backButton = Button(mapScreen, text = 'Back', command = lambda: back(mapScreen))
-    # backButton.place(x = width - 50, y = height - 50, anchor = "center")
+    backButton = Button(mapScreen, text = 'Back', command = lambda: back(mapScreen))
+    backButton.place(x = width - 50, y = height - 50, anchor = "center")
 
     mapScreen.mainloop()
 
