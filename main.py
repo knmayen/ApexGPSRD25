@@ -6,7 +6,7 @@ import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
 from commonFunctions import *
-import config
+# import config
 
 loadData()
 

@@ -36,9 +36,12 @@
 # allRolls[date][infoDict['driver']] = dict()
 # allRolls[date][infoDict['driver']][tag] = 'hello'
 # print(allRolls)
-from rollInputUI import allRolls
+# from rollInputUI import allRolls
+import config
+from commonFunctions import *
 
 
+loadData()
 
 def getAllTags(dict, tags = []):
     for key in dict:
@@ -61,4 +64,5 @@ def findRoll(dict, tag):
                 return solution
 
 
-print(findRoll(allRolls, '2024-12-17-LQ-Fir-4'))
+# print(findRoll(allRolls, '2024-12-17-LQ-Fir-4'))
+print(getAllTags(config.allRolls))

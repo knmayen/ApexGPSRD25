@@ -27,7 +27,9 @@ def getAllTags(dict, tags = []):
             tags =  getAllTags(dict[key], tags)
     return tags
 
-allTags = getAllTags(config.allRolls)
+global allTags
+allTags = []
+# allTags = getAllTags(config.allRolls)
 
 
 def addRollFile():
@@ -63,7 +65,7 @@ def saveRoll():
         # add to dictionary
         createSubdictionaries(date, infoDict, tag)
         config.allRolls[date][infoDict['driver']][tag] = Roll(gpx, infoDict, filename)
-        allTags.append(tag)
+        # allTags.append(tag)
         print(config.allRolls)
         error.pack_forget()
 
@@ -165,8 +167,13 @@ def pusherFrame():
 def updateRollListbox():
     global allTags
     rollListbox.delete(0, tkinter.END)  # Clear the existing items
+    allTags = []
+    print('first', allTags)
+    allTags = getAllTags(config.allRolls)
+    print('second', config.allRolls, allTags)
     allTags.sort()
     allTags = allTags[::-1] # reverse so that the most recent are at the top
+    
     for item in allTags:
         rollListbox.insert(tkinter.END, item)
 

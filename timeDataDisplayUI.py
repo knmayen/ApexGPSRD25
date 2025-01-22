@@ -17,23 +17,23 @@ topCols = ['name',
 
 # find the best and average hill time for each pusher and each hill 
 def updatePusherBests():
-    print(config.allPushers)
+    # print(config.allPushers)
     for pusher in config.allPushers:
         getBestTimes(config.allPushers[pusher])
         getAverageTimes(config.allPushers[pusher])
 
 def getBestTimes(pusher):
     # print(config.allPushers[pusher])
-    print(pusher, pusher.times, pusher.bestTimes)
+    # print(pusher, pusher.times, pusher.bestTimes)
     for hill in pusher.times:
         bestTime = None
         for tag in pusher.times[hill]:
             time = pusher.times[hill][tag]
-            print(bestTime, time)
             if bestTime == None or time < bestTime:
                 pusher.bestTimes[hill] = (time, tag)
                 bestTime = time
-    print(pusher.bestTimes)
+        # print(pusher, hill, 'best', bestTime)
+    # print(pusher.bestTimes)
 
 def getAverageTimes(pusher):
     # print(str(pusher), config.allPushers[pusher].avgTimes)
@@ -42,11 +42,14 @@ def getAverageTimes(pusher):
         for tag in pusher.times[hill]:
             time = pusher.times[hill][tag]
             totalTime += time
-        pusher.avgTimes[hill] = totalTime
-    print(pusher.avgTimes)
+        if len(pusher.times[hill]) > 0:
+            pusher.avgTimes[hill] = totalTime / len(pusher.times[hill])
+            # print(pusher, hill, 'average', totalTime / len(pusher.times[hill]))
+        else:
+            pusher.avgTimes[hill] = None
         
 
-
+# starting the actual display for the grid
 def drawGrid():
     drawLabels()
     for r in range(rows):
@@ -56,6 +59,7 @@ def drawGrid():
             cell = canvas.create_rectangle(x0, y0, x0 + cellWidth, y0 + cellHeight, fill = None)
             row.append(cell)
         allCells.append(row)
+    updateDisplay()
 
 def drawLabels():
     for c in range(cols):
@@ -77,17 +81,17 @@ def displaySelectionFrame():
     lb1 = Label(selectionFrame, text = 'Divisions: ')
     lb1.pack(side = LEFT, padx= pad)
     global agDivision
-    agDivision = IntVar()
+    agDivision = IntVar(selectionFrame)
     agDivisionBox = Checkbutton(selectionFrame, text = "All Gender", variable = agDivision, 
                            onvalue = 1, offvalue = 0)
     agDivisionBox.pack(side = LEFT, padx= pad)
     global wDivision
-    wDivision = IntVar()
+    wDivision = IntVar(selectionFrame)
     wDivisionBox = Checkbutton(selectionFrame, text = "Womens", variable = wDivision, 
                            onvalue = 1, offvalue = 0)
     wDivisionBox.pack(side = LEFT, padx= pad)
     global mDivision
-    mDivision = IntVar()
+    mDivision = IntVar(selectionFrame)
     mDivisionBox = Checkbutton(selectionFrame, text = "Mens", variable = mDivision, 
                            onvalue = 1, offvalue = 0)
     mDivisionBox.pack(side = LEFT, padx= pad)
@@ -106,7 +110,39 @@ def displaySelectionFrame():
 
 def updateDisplay():
     selectionDict = getSelection()
-#     displayData(selectionDict)
+    names = getSortedNames(selectionDict)
+#   displayData(selectionDict)
+
+def getSortedNames(selectionDict):
+    print(selectionDict)
+    names = getPushersInDivision(selectionDict)
+    print(names)
+    if selectionDict['category'] == 'name':
+        return names.sort()
+    else:
+        type = selectionDict['category'][:selectionDict['category'].find('\n')]
+        hill = selectionDict['category'][selectionDict['category'].find('\n'):]
+        print(type, hill)
+        namesDict = dict()
+        for pusher in names:
+            if type == 'Best':
+                namesDict[config.allPushers[pusher].bestTimes[hill]] = pusher
+        print(namesDict)
+
+
+
+def getPushersInDivision(selectionDict):
+    print(config.allPushers)
+    divs = ['ag', 'w', 'm']
+    pushers = set()
+    for div in divs:
+        print(selectionDict[div]) 
+        if selectionDict[div] == 1:
+            print('div', div)
+            for pusher in config.allPushers:
+                if getattr(config.allPushers[pusher], div) == 1:
+                    pushers.add(pusher)
+    return list(pushers)
 
 # def displayData():
 #     return 42
@@ -114,10 +150,13 @@ def updateDisplay():
 def getSelection():
     selectionDict = dict()
     raw = sortChoicesBox.get() 
-    selectionDict['category'] = raw[:raw.find('\n')] + raw[raw.find('\n') + 1:]
-    selectionDict['All Gender'] = agDivision.get()
-    selectionDict['Womens'] = wDivision.get()
-    selectionDict['Mens'] = mDivision.get()
+    if raw == 'name':
+        selectionDict['category'] = 'name'
+    else:
+        selectionDict['category'] = raw[:raw.find('\n')] + raw[raw.find('\n') + 1:]
+    selectionDict['ag'] = agDivision.get()
+    selectionDict['w'] = wDivision.get()
+    selectionDict['m'] = mDivision.get()
     return selectionDict
 
 
@@ -163,4 +202,4 @@ def timesDisplayScreenRun():
 
     timesDisplayScreen.mainloop()
 
-# timesDisplayScreenRun()
+timesDisplayScreenRun()
